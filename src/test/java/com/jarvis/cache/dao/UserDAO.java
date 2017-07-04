@@ -16,6 +16,7 @@ public class UserDAO {
         user.setId(id);
         user.setAge(id + 10);
         user.setName("name" + id);
+        System.out.println("load data form db");
         return user;
     }
 

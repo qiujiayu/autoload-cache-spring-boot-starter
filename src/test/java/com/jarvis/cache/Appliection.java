@@ -3,10 +3,8 @@ package com.jarvis.cache;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.jarvis.cache.autoconfigure.enable.EnableAutoloadCache;
-
 @SpringBootApplication
-@EnableAutoloadCache
+// @EnableCaching
 public class Appliection {
 
     public static void main(String[] args) {

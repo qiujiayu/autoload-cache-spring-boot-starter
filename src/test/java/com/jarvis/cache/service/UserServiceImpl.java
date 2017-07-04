@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.jarvis.cache.annotation.CacheDeleteTransactional;
 import com.jarvis.cache.dao.UserDAO;
+import com.jarvis.cache.mapper.ClientUpgradeMapper;
 import com.jarvis.cache.to.User;
 
 @Service
@@ -12,9 +13,13 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDAO userDAO;
+    
+    @Autowired
+    private ClientUpgradeMapper clientUpgradeMapper;
 
     @Override
     public User getUserById(Integer id) {
+        System.out.println(clientUpgradeMapper.getById(83));
         return userDAO.getUserById(id);
     }
 

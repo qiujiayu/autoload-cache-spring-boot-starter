@@ -5,6 +5,7 @@
 .idea
 *.iml
 *.class
+.factorypath
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

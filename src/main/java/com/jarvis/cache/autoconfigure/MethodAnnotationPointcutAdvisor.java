@@ -1,4 +1,4 @@
-package com.jarvis.cache.autoconfigure.enable;
+package com.jarvis.cache.autoconfigure;
 
 import java.lang.annotation.Annotation;
 
@@ -8,6 +8,7 @@ import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
 
 /**
+ * PointcutAdvisor
  * @author jiayu.qiu
  */
 public class MethodAnnotationPointcutAdvisor extends AbstractPointcutAdvisor {
