@@ -13,12 +13,13 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDAO userDAO;
-    
+
     @Autowired
     private ClientUpgradeMapper clientUpgradeMapper;
 
     @Override
     public User getUserById(Integer id) {
+        // 测试Mybatis
         System.out.println(clientUpgradeMapper.getById(83));
         return userDAO.getUserById(id);
     }

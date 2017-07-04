@@ -10,20 +10,25 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.util.ClassUtils;
 
 import com.jarvis.cache.ICacheManager;
 import com.jarvis.cache.redis.JedisClusterCacheManager;
 import com.jarvis.cache.script.AbstractScriptParser;
 import com.jarvis.cache.script.OgnlParser;
+import com.jarvis.cache.script.SpringELParser;
 import com.jarvis.cache.serializer.HessianSerializer;
 import com.jarvis.cache.serializer.ISerializer;
+import com.jarvis.cache.serializer.JdkSerializer;
 
 import redis.clients.jedis.JedisCluster;
 
 /**
  * 对autoload-cache进行一些默认配置<br>
- * 默认{@link AbstractScriptParser AbstractScriptParser} 使用Ognl表达式：{@link OgnlParser OgnlParser}<br>
- * 默认{@link ISerializer ISerializer} 使用Hessian 来处理：{@link HessianSerializer HessianSerializer}<br>
+ * 表达式解析器{@link AbstractScriptParser AbstractScriptParser} 注入规则：<br>
+ * 如果导入了Ognl的jar包，优先 使用Ognl表达式：{@link OgnlParser OgnlParser}，否则使用{@link SpringELParser SpringELParser}<br>
+ * 序列化工具{@link ISerializer ISerializer} 注入规则：<br>
+ * 如果导入了Hessian的jar包，优先使用Hessian：{@link HessianSerializer HessianSerializer},否则使用{@link JdkSerializer JdkSerializer}<br>
  * 默认只支持{@link JedisClusterCacheManager JedisClusterCacheManager}<br>
  * 如果需要自定义，只要自行覆盖即可
  * @author jiayu.qiu
@@ -37,20 +42,37 @@ public class AutoloadCacheManageConfiguration {
 
     private static final Logger logger=LoggerFactory.getLogger(AutoloadCacheManageConfiguration.class);
 
+    private static final boolean ognlPresent=ClassUtils.isPresent("ognl.Ognl", AutoloadCacheManageConfiguration.class.getClassLoader());
+
+    private static final boolean hessianPresent=ClassUtils.isPresent("com.caucho.hessian.io.AbstractSerializerFactory", AutoloadCacheManageConfiguration.class.getClassLoader());
+
     @ConditionalOnMissingBean(AbstractScriptParser.class)
-    @ConditionalOnClass(name="ognl.Ognl")
     @Bean
     public AbstractScriptParser scriptParser() {
-        logger.debug("AbstractScriptParser auto-configured");
-        return new OgnlParser();
+        AbstractScriptParser res=null;
+        if(ognlPresent) {
+            res=new OgnlParser();
+            logger.debug("OgnlParser auto-configured");
+        } else {
+            res=new SpringELParser();
+            logger.debug("SpringELParser auto-configured");
+        }
+
+        return res;
     }
 
     @ConditionalOnMissingBean(ISerializer.class)
-    @ConditionalOnClass(name="com.caucho.hessian.io.AbstractSerializerFactory")
     @Bean
-    public ISerializer<Object> serializer() {// 推荐使用：Hessian
-        logger.debug("ISerializer auto-configured");
-        return new HessianSerializer();
+    public ISerializer<Object> serializer() {
+        ISerializer<Object> res;
+        if(hessianPresent) {// 推荐优先使用：Hessian
+            res=new HessianSerializer();
+            logger.debug("HessianSerializer auto-configured");
+        } else {
+            res=new JdkSerializer();
+            logger.debug("JdkSerializer auto-configured");
+        }
+        return res;
     }
 
     @ConditionalOnMissingBean(ICacheManager.class)

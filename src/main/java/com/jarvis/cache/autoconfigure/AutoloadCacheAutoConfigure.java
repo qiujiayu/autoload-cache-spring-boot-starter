@@ -2,6 +2,7 @@ package com.jarvis.cache.autoconfigure;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.aop.framework.autoproxy.AbstractAdvisorAutoProxyCreator;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,9 +89,12 @@ public class AutoloadCacheAutoConfigure {
     }
 
     // 3.配置ProxyCreator
+    @ConditionalOnMissingBean(DefaultAdvisorAutoProxyCreator.class)
+    // @Lazy
     @Bean
-    public DefaultAdvisorAutoProxyCreator autoProxyCreator() {
+    public AbstractAdvisorAutoProxyCreator autoProxyCreator() {
         DefaultAdvisorAutoProxyCreator proxy=new DefaultAdvisorAutoProxyCreator();
+        proxy.setAdvisorBeanNamePrefix("autoloadCache");
         // proxy.setInterceptorNames("cacheAdvisor","cacheDeleteAdvisor","cacheDeleteTransactionalAdvisor");// 注意此处不需要设置，否则会执行两次
         return proxy;
     }
