@@ -1,11 +1,8 @@
 package com.jarvis.cache.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
-
 import com.jarvis.cache.annotation.Cache;
 import com.jarvis.cache.to.ClientUpgrade;
 
-@Mapper
 public interface ClientUpgradeMapper {
 
     /**
