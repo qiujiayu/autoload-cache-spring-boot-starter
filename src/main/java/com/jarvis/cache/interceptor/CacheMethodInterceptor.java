@@ -12,7 +12,7 @@ import com.jarvis.cache.annotation.Cache;
 import com.jarvis.cache.interceptor.aopproxy.CacheAopProxy;
 
 /**
- * @Cache 拦截注解
+ * 对@Cache 拦截注解
  * @author jiayu.qiu
  */
 public class CacheMethodInterceptor implements MethodInterceptor {

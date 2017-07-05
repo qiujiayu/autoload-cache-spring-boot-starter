@@ -12,7 +12,7 @@ import com.jarvis.cache.annotation.CacheDeleteTransactional;
 import com.jarvis.cache.interceptor.aopproxy.CacheAopProxy;
 
 /**
- * @CacheDeleteTransactional 拦截注解
+ * 对@CacheDeleteTransactional 拦截注解
  * @author jiayu.qiu
  */
 public class CacheDeleteTransactionalInterceptor implements MethodInterceptor {

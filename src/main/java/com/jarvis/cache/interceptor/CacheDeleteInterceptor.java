@@ -12,7 +12,7 @@ import com.jarvis.cache.annotation.CacheDelete;
 import com.jarvis.cache.interceptor.aopproxy.DeleteCacheAopProxy;
 
 /**
- * @CacheDelete 拦截注解
+ * 对@CacheDelete 拦截注解
  * @author jiayu.qiu
  */
 public class CacheDeleteInterceptor implements MethodInterceptor {
