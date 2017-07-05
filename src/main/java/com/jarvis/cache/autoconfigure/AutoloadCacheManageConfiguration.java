@@ -88,8 +88,8 @@ public class AutoloadCacheManageConfiguration {
         JedisClusterCacheManager manager=new JedisClusterCacheManager(config.getConfig(), serializer);
         manager.setJedisCluster(jedisCluster);
         // 根据需要自行配置
-        // manager.setHashExpire(hashExpire);
-        // manager.setHashExpireByScript(hashExpireByScript);
+        manager.setHashExpire(config.getJedisCluster().getHashExpire());
+        manager.setHashExpireByScript(config.getJedisCluster().isHashExpireByScript());
         logger.debug("ICacheManager auto-configured," + config.getConfig());
         return manager;
     }
