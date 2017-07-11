@@ -52,22 +52,26 @@ public class AutoloadCacheAutoConfigure {
 
     // 1. 创建通知
     @Bean
+    @ConditionalOnBean(CacheHandler.class)
     public CacheMethodInterceptor cacheMethodInterceptor(CacheHandler cacheHandler) {
         return new CacheMethodInterceptor(cacheHandler);
     }
 
     @Bean
+    @ConditionalOnBean(CacheHandler.class)
     public CacheDeleteInterceptor cacheDeleteInterceptor(CacheHandler cacheHandler) {
         return new CacheDeleteInterceptor(cacheHandler);
     }
 
     @Bean
+    @ConditionalOnBean(CacheHandler.class)
     public CacheDeleteTransactionalInterceptor cacheDeleteTransactionalInterceptor(CacheHandler cacheHandler) {
         return new CacheDeleteTransactionalInterceptor(cacheHandler);
     }
 
     // 2.配置Advisor
     @Bean("autoloadCacheAdvisor")
+    @ConditionalOnBean(CacheHandler.class)
     public AbstractPointcutAdvisor cacheAdvisor(CacheMethodInterceptor cacheMethodInterceptor) {
         AbstractPointcutAdvisor cacheAdvisor=new MethodAnnotationPointcutAdvisor(Cache.class, cacheMethodInterceptor);
         cacheAdvisor.setOrder(0);
@@ -75,6 +79,7 @@ public class AutoloadCacheAutoConfigure {
     }
 
     @Bean("autoloadCacheDeleteAdvisor")
+    @ConditionalOnBean(CacheHandler.class)
     public AbstractPointcutAdvisor cacheDeleteAdvisor(CacheDeleteInterceptor cacheDeleteInterceptor) {
         AbstractPointcutAdvisor cacheDeleteAdvisor=new MethodAnnotationPointcutAdvisor(CacheDelete.class, cacheDeleteInterceptor);
         cacheDeleteAdvisor.setOrder(Integer.MAX_VALUE);
@@ -82,6 +87,7 @@ public class AutoloadCacheAutoConfigure {
     }
 
     @Bean("autoloadCacheDeleteTransactionalAdvisor")
+    @ConditionalOnBean(CacheHandler.class)
     public AbstractPointcutAdvisor cacheDeleteTransactionalAdvisor(CacheDeleteTransactionalInterceptor cacheDeleteTransactionalInterceptor) {
         AbstractPointcutAdvisor cacheDeleteTransactionalAdvisor=new MethodAnnotationPointcutAdvisor(CacheDeleteTransactional.class, cacheDeleteTransactionalInterceptor);
         cacheDeleteTransactionalAdvisor.setOrder(0);
@@ -92,6 +98,7 @@ public class AutoloadCacheAutoConfigure {
     @ConditionalOnMissingBean(DefaultAdvisorAutoProxyCreator.class)
     // @Lazy
     @Bean
+    @ConditionalOnBean(CacheHandler.class)
     public AbstractAdvisorAutoProxyCreator autoProxyCreator() {
         DefaultAdvisorAutoProxyCreator proxy=new DefaultAdvisorAutoProxyCreator();
         proxy.setAdvisorBeanNamePrefix("autoloadCache");

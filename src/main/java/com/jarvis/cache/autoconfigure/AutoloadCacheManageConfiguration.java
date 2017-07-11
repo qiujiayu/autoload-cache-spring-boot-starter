@@ -46,8 +46,13 @@ public class AutoloadCacheManageConfiguration {
 
     private static final boolean hessianPresent=ClassUtils.isPresent("com.caucho.hessian.io.AbstractSerializerFactory", AutoloadCacheManageConfiguration.class.getClassLoader());
 
-    @ConditionalOnMissingBean(AbstractScriptParser.class)
+    
+    /**
+     * 
+     * @return
+     */
     @Bean
+    @ConditionalOnMissingBean(AbstractScriptParser.class)
     public AbstractScriptParser scriptParser() {
         AbstractScriptParser res=null;
         if(ognlPresent) {
@@ -61,8 +66,12 @@ public class AutoloadCacheManageConfiguration {
         return res;
     }
 
-    @ConditionalOnMissingBean(ISerializer.class)
+    /**
+     * 
+     * @return
+     */
     @Bean
+    @ConditionalOnMissingBean(ISerializer.class)
     public ISerializer<Object> serializer() {
         ISerializer<Object> res;
         if(hessianPresent) {// 推荐优先使用：Hessian
@@ -75,8 +84,16 @@ public class AutoloadCacheManageConfiguration {
         return res;
     }
 
-    @ConditionalOnMissingBean(ICacheManager.class)
+    
+    /**
+     * 
+     * @param config
+     * @param serializer
+     * @param connectionFactory
+     * @return
+     */
     @Bean
+    @ConditionalOnMissingBean(ICacheManager.class)
     public ICacheManager cacheManager(AutoloadCacheProperties config, ISerializer<Object> serializer, RedisConnectionFactory connectionFactory) {
         if(null == connectionFactory) {
             return null;
