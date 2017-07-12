@@ -35,7 +35,6 @@ import redis.clients.jedis.JedisCluster;
  */
 @Configuration
 @ConditionalOnClass(ICacheManager.class)
-@ConditionalOnMissingBean(value=ICacheManager.class)
 @EnableConfigurationProperties(AutoloadCacheProperties.class)
 @AutoConfigureAfter({RedisAutoConfiguration.class})
 public class AutoloadCacheManageConfiguration {
