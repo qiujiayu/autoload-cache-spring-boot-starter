@@ -9,11 +9,16 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisClusterConnection;
+import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.jedis.JedisConnection;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.util.ClassUtils;
 
 import com.jarvis.cache.ICacheManager;
 import com.jarvis.cache.redis.JedisClusterCacheManager;
+import com.jarvis.cache.redis.SpringJedisCacheManager;
 import com.jarvis.cache.script.AbstractScriptParser;
 import com.jarvis.cache.script.OgnlParser;
 import com.jarvis.cache.script.SpringELParser;
@@ -25,19 +30,13 @@ import redis.clients.jedis.JedisCluster;
 
 /**
  * 对autoload-cache进行一些默认配置<br>
- * 表达式解析器{@link AbstractScriptParser AbstractScriptParser} 注入规则：<br>
- * 如果导入了Ognl的jar包，优先 使用Ognl表达式：{@link OgnlParser OgnlParser}，否则使用{@link SpringELParser SpringELParser}<br>
- * 序列化工具{@link ISerializer ISerializer} 注入规则：<br>
- * 如果导入了Hessian的jar包，优先使用Hessian：{@link HessianSerializer HessianSerializer},否则使用{@link JdkSerializer JdkSerializer}<br>
- * 默认只支持{@link JedisClusterCacheManager JedisClusterCacheManager}<br>
- * 如果需要自定义，只要自行覆盖即可
+ * 如果需要自定义，需要自行覆盖即可
  * @author jiayu.qiu
  */
 @Configuration
 @ConditionalOnClass(ICacheManager.class)
-@ConditionalOnMissingBean(value=ICacheManager.class)
 @EnableConfigurationProperties(AutoloadCacheProperties.class)
-@AutoConfigureAfter({RedisAutoConfiguration.class})
+@AutoConfigureAfter(RedisAutoConfiguration.class)
 public class AutoloadCacheManageConfiguration {
 
     private static final Logger logger=LoggerFactory.getLogger(AutoloadCacheManageConfiguration.class);
@@ -46,9 +45,9 @@ public class AutoloadCacheManageConfiguration {
 
     private static final boolean hessianPresent=ClassUtils.isPresent("com.caucho.hessian.io.AbstractSerializerFactory", AutoloadCacheManageConfiguration.class.getClassLoader());
 
-    
     /**
-     * 
+     * 表达式解析器{@link AbstractScriptParser AbstractScriptParser} 注入规则：<br>
+     * 如果导入了Ognl的jar包，优先 使用Ognl表达式：{@link OgnlParser OgnlParser}，否则使用{@link SpringELParser SpringELParser}<br>
      * @return
      */
     @Bean
@@ -67,7 +66,8 @@ public class AutoloadCacheManageConfiguration {
     }
 
     /**
-     * 
+     * * 序列化工具{@link ISerializer ISerializer} 注入规则：<br>
+     * 如果导入了Hessian的jar包，优先使用Hessian：{@link HessianSerializer HessianSerializer},否则使用{@link JdkSerializer JdkSerializer}<br>
      * @return
      */
     @Bean
@@ -84,9 +84,8 @@ public class AutoloadCacheManageConfiguration {
         return res;
     }
 
-    
     /**
-     * 
+     * 默认只支持{@link JedisClusterCacheManager JedisClusterCacheManager}<br>
      * @param config
      * @param serializer
      * @param connectionFactory
@@ -98,16 +97,37 @@ public class AutoloadCacheManageConfiguration {
         if(null == connectionFactory) {
             return null;
         }
-        JedisCluster jedisCluster=(JedisCluster)connectionFactory.getClusterConnection().getNativeConnection();
-        if(null == jedisCluster) {
+        if(!(connectionFactory instanceof JedisConnectionFactory)) {
+            logger.debug("connectionFactory is not JedisConnectionFactory");
             return null;
         }
-        JedisClusterCacheManager manager=new JedisClusterCacheManager(config.getConfig(), serializer);
-        manager.setJedisCluster(jedisCluster);
-        // 根据需要自行配置
-        manager.setHashExpire(config.getJedisCluster().getHashExpire());
-        manager.setHashExpireByScript(config.getJedisCluster().isHashExpireByScript());
-        logger.debug("ICacheManager auto-configured," + config.getConfig());
-        return manager;
+
+        RedisConnection redisConnection=connectionFactory.getConnection();
+        if(null != redisConnection) {
+            if(redisConnection instanceof RedisClusterConnection) {
+                RedisClusterConnection redisClusterConnection=(RedisClusterConnection)redisConnection;
+                // 优化使用JedisCluster
+                JedisCluster jedisCluster=null;
+                jedisCluster=(JedisCluster)redisClusterConnection.getNativeConnection();
+                if(null != jedisCluster) {
+                    JedisClusterCacheManager manager=new JedisClusterCacheManager(config.getConfig(), serializer);
+                    manager.setJedisCluster(jedisCluster);
+                    // 根据需要自行配置
+                    manager.setHashExpire(config.getJedis().getHashExpire());
+                    manager.setHashExpireByScript(config.getJedis().isHashExpireByScript());
+                    logger.debug("ICacheManager with JedisClusterCacheManager auto-configured," + config.getConfig());
+                    return manager;
+                }
+            } else if(redisConnection instanceof JedisConnection) {
+                SpringJedisCacheManager manager=new SpringJedisCacheManager(config.getConfig(), serializer);
+                manager.setRedisConnectionFactory((JedisConnectionFactory)connectionFactory);
+                // 根据需要自行配置
+                manager.setHashExpire(config.getJedis().getHashExpire());
+                manager.setHashExpireByScript(config.getJedis().isHashExpireByScript());
+                logger.debug("ICacheManager with SpringJedisCacheManager auto-configured," + config.getConfig());
+                return manager;
+            }
+        }
+        return null;
     }
 }

@@ -12,7 +12,7 @@ public class AutoloadCacheProperties {
 
     private AutoLoadConfig config=new AutoLoadConfig();
 
-    private JedisClusterCacheManagerConfig jedisCluster=new JedisClusterCacheManagerConfig();
+    private JedisCacheManagerConfig jedis=new JedisCacheManagerConfig();
 
     public AutoLoadConfig getConfig() {
         return config;
@@ -22,20 +22,19 @@ public class AutoloadCacheProperties {
         this.config=config;
     }
 
-    public JedisClusterCacheManagerConfig getJedisCluster() {
-        return jedisCluster;
+    public JedisCacheManagerConfig getJedis() {
+        return jedis;
     }
 
-    public void setJedisCluster(JedisClusterCacheManagerConfig jedisCluster) {
-        this.jedisCluster=jedisCluster;
+    public void setJedis(JedisCacheManagerConfig jedis) {
+        this.jedis=jedis;
     }
 
     /**
      * 对JedisClusterCacheManager 进行配置
      * @author jiayu.qiu
-     *
      */
-    static class JedisClusterCacheManagerConfig {
+    static class JedisCacheManagerConfig {
 
         /**
          * Hash的缓存时长：等于0时永久缓存；大于0时，主要是为了防止一些已经不用的缓存占用内存;hashExpire小于0时，则使用@Cache中设置的expire值（默认值为-1）。

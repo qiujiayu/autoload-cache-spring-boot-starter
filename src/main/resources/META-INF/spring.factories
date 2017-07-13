@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.jarvis.cache.autoconfigure.AutoloadCacheAutoConfigure
+com.jarvis.cache.autoconfigure.AutoloadCacheAutoConfigure,com.jarvis.cache.autoconfigure.AutoloadCacheManageConfiguration
