@@ -1,12 +1,12 @@
-package com.jarvis.cache.service;
+package com.jarvis.cache.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jarvis.cache.annotation.CacheDeleteTransactional;
-import com.jarvis.cache.dao.UserDAO;
-import com.jarvis.cache.mapper.ClientUpgradeMapper;
-import com.jarvis.cache.to.User;
+import com.jarvis.cache.demo.dao.UserDAO;
+import com.jarvis.cache.demo.mapper.ClientUpgradeMapper;
+import com.jarvis.cache.demo.to.User;
 
 @Service
 public class UserServiceImpl implements UserService {

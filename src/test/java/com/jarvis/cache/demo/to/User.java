@@ -1,4 +1,4 @@
-package com.jarvis.cache.to;
+package com.jarvis.cache.demo.to;
 
 import java.io.Serializable;
 

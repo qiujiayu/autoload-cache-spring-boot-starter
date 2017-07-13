@@ -1,7 +1,7 @@
-package com.jarvis.cache.mapper;
+package com.jarvis.cache.demo.mapper;
 
 import com.jarvis.cache.annotation.Cache;
-import com.jarvis.cache.to.ClientUpgrade;
+import com.jarvis.cache.demo.to.ClientUpgrade;
 
 public interface ClientUpgradeMapper {
 

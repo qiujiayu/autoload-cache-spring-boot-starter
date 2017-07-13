@@ -1,11 +1,11 @@
-package com.jarvis.cache.dao;
+package com.jarvis.cache.demo.dao;
 
 import org.springframework.stereotype.Component;
 
 import com.jarvis.cache.annotation.Cache;
 import com.jarvis.cache.annotation.CacheDelete;
 import com.jarvis.cache.annotation.CacheDeleteKey;
-import com.jarvis.cache.to.User;
+import com.jarvis.cache.demo.to.User;
 
 @Component
 public class UserDAO {

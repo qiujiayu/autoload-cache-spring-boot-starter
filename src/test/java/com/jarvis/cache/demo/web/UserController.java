@@ -1,12 +1,12 @@
-package com.jarvis.cache.web;
+package com.jarvis.cache.demo.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jarvis.cache.service.UserService;
-import com.jarvis.cache.to.User;
+import com.jarvis.cache.demo.service.UserService;
+import com.jarvis.cache.demo.to.User;
 
 @RestController
 public class UserController {

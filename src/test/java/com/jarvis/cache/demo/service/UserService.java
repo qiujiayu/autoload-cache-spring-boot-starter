@@ -1,6 +1,6 @@
-package com.jarvis.cache.service;
+package com.jarvis.cache.demo.service;
 
-import com.jarvis.cache.to.User;
+import com.jarvis.cache.demo.to.User;
 
 public interface UserService {
 
