@@ -52,7 +52,7 @@ public class AutoloadCacheManageConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(AbstractScriptParser.class)
-    public AbstractScriptParser scriptParser() {
+    public AbstractScriptParser autoloadCacheScriptParser() {
         AbstractScriptParser res=null;
         if(ognlPresent) {
             res=new OgnlParser();
@@ -72,7 +72,7 @@ public class AutoloadCacheManageConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(ISerializer.class)
-    public ISerializer<Object> serializer() {
+    public ISerializer<Object> autoloadCacheSerializer() {
         ISerializer<Object> res;
         if(hessianPresent) {// 推荐优先使用：Hessian
             res=new HessianSerializer();
@@ -93,7 +93,7 @@ public class AutoloadCacheManageConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(ICacheManager.class)
-    public ICacheManager cacheManager(AutoloadCacheProperties config, ISerializer<Object> serializer, RedisConnectionFactory connectionFactory) {
+    public ICacheManager autoloadCacheCacheManager(AutoloadCacheProperties config, ISerializer<Object> serializer, RedisConnectionFactory connectionFactory) {
         if(null == connectionFactory) {
             return null;
         }
@@ -106,7 +106,7 @@ public class AutoloadCacheManageConfiguration {
         if(null != redisConnection) {
             if(redisConnection instanceof RedisClusterConnection) {
                 RedisClusterConnection redisClusterConnection=(RedisClusterConnection)redisConnection;
-                // 优化使用JedisCluster
+                // 优先使用JedisCluster
                 JedisCluster jedisCluster=null;
                 jedisCluster=(JedisCluster)redisClusterConnection.getNativeConnection();
                 if(null != jedisCluster) {
