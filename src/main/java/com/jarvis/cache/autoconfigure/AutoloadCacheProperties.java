@@ -1,6 +1,10 @@
 package com.jarvis.cache.autoconfigure;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.env.Environment;
 
 import com.jarvis.cache.to.AutoLoadConfig;
 
@@ -13,6 +17,26 @@ public class AutoloadCacheProperties {
     private AutoLoadConfig config=new AutoLoadConfig();
 
     private JedisCacheManagerConfig jedis=new JedisCacheManagerConfig();
+
+    @Autowired
+    private Environment env;
+
+    private boolean namespaceEnable=true;
+
+    @PostConstruct
+    public void init() {
+        if(namespaceEnable && null != env) {
+            String namespace=config.getNamespace();
+
+            if(null == namespace || namespace.trim().length() == 0) {
+                String applicationName=env.getProperty("spring.application.name");
+                if(null != applicationName && applicationName.trim().length() > 0) {
+                    config.setNamespace(applicationName);
+                }
+            }
+        }
+
+    }
 
     public AutoLoadConfig getConfig() {
         return config;
@@ -28,6 +52,14 @@ public class AutoloadCacheProperties {
 
     public void setJedis(JedisCacheManagerConfig jedis) {
         this.jedis=jedis;
+    }
+
+    public boolean isNamespaceEnable() {
+        return namespaceEnable;
+    }
+
+    public void setNamespaceEnable(boolean namespaceEnable) {
+        this.namespaceEnable=namespaceEnable;
     }
 
     /**
