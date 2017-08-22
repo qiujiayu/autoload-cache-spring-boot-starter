@@ -22,6 +22,8 @@ public class AutoloadCacheProperties {
     private Environment env;
 
     private boolean namespaceEnable=true;
+    
+    private boolean proxyTargetClass=false;
 
     @PostConstruct
     public void init() {
@@ -60,6 +62,14 @@ public class AutoloadCacheProperties {
 
     public void setNamespaceEnable(boolean namespaceEnable) {
         this.namespaceEnable=namespaceEnable;
+    }
+
+    public boolean isProxyTargetClass() {
+        return proxyTargetClass;
+    }
+
+    public void setProxyTargetClass(boolean proxyTargetClass) {
+        this.proxyTargetClass = proxyTargetClass;
     }
 
     /**

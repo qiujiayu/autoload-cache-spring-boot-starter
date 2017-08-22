@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @MapperScan("com.jarvis.cache.demo.mapper")
-public class Appliection {
+public class CacheDemoApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Appliection.class, args);
+        SpringApplication.run(CacheDemoApplication.class, args);
     }
 }

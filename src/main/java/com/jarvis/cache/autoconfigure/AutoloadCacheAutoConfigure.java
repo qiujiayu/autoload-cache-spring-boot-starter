@@ -97,10 +97,10 @@ public class AutoloadCacheAutoConfigure {
     // 3.配置ProxyCreator
     @Bean
     @ConditionalOnBean(CacheHandler.class)
-    public AbstractAdvisorAutoProxyCreator autoloadCacheAutoProxyCreator() {
+    public AbstractAdvisorAutoProxyCreator autoloadCacheAutoProxyCreator(AutoloadCacheProperties config) {
         DefaultAdvisorAutoProxyCreator proxy=new DefaultAdvisorAutoProxyCreator();
         proxy.setAdvisorBeanNamePrefix("autoloadCache");
-        // proxy.setProxyTargetClass(true);
+        proxy.setProxyTargetClass(config.isProxyTargetClass());
         // proxy.setInterceptorNames("cacheAdvisor","cacheDeleteAdvisor","cacheDeleteTransactionalAdvisor");// 注意此处不需要设置，否则会执行两次
         return proxy;
     }
