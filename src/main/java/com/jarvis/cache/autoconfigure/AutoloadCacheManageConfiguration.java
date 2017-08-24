@@ -102,7 +102,12 @@ public class AutoloadCacheManageConfiguration {
             return null;
         }
 
-        RedisConnection redisConnection=connectionFactory.getConnection();
+        RedisConnection redisConnection=null;
+        try {
+            redisConnection=connectionFactory.getConnection(); // 当Redis配置不正确时，此处会抛异常
+        } catch(Throwable e) {
+            logger.error(e.getMessage(), e);
+        }
         if(null != redisConnection) {
             if(redisConnection instanceof RedisClusterConnection) {
                 RedisClusterConnection redisClusterConnection=(RedisClusterConnection)redisConnection;

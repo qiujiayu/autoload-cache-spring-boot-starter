@@ -161,13 +161,16 @@
   <profiles>
     <profile>
       <id>release</id>
+      <properties>
+        <gpg.executable>gpg2</gpg.executable>
+      </properties>
       <build>
         <plugins>
           <!-- GPG -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.5</version>
+            <version>1.6</version>
             <executions>
               <execution>
                 <phase>verify</phase>

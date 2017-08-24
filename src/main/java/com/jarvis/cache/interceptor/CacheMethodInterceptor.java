@@ -10,6 +10,7 @@ import org.springframework.aop.support.AopUtils;
 
 import com.jarvis.cache.CacheHandler;
 import com.jarvis.cache.annotation.Cache;
+import com.jarvis.cache.autoconfigure.AutoloadCacheProperties;
 import com.jarvis.cache.interceptor.aopproxy.CacheAopProxy;
 import com.jarvis.cache.util.AopUtil;
 
@@ -22,13 +23,19 @@ public class CacheMethodInterceptor implements MethodInterceptor {
     private static final Logger logger=LoggerFactory.getLogger(CacheMethodInterceptor.class);
 
     private final CacheHandler cacheHandler;
+    
+    private final AutoloadCacheProperties config;
 
-    public CacheMethodInterceptor(CacheHandler cacheHandler) {
+    public CacheMethodInterceptor(CacheHandler cacheHandler, AutoloadCacheProperties config) {
         this.cacheHandler=cacheHandler;
+        this.config=config;
     }
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
+        if(!this.config.isEnable()) {
+            return invocation.proceed();
+        }
         Class<?> cls=AopUtil.getTargetClass(invocation.getThis());
         Method method=invocation.getMethod();
         if(!cls.equals(invocation.getThis().getClass())) {

@@ -10,6 +10,7 @@ import org.springframework.aop.support.AopUtils;
 
 import com.jarvis.cache.CacheHandler;
 import com.jarvis.cache.annotation.CacheDeleteTransactional;
+import com.jarvis.cache.autoconfigure.AutoloadCacheProperties;
 import com.jarvis.cache.interceptor.aopproxy.DeleteCacheTransactionalAopProxy;
 import com.jarvis.cache.util.AopUtil;
 
@@ -23,12 +24,18 @@ public class CacheDeleteTransactionalInterceptor implements MethodInterceptor {
 
     private final CacheHandler cacheHandler;
 
-    public CacheDeleteTransactionalInterceptor(CacheHandler cacheHandler) {
+    private final AutoloadCacheProperties config;
+
+    public CacheDeleteTransactionalInterceptor(CacheHandler cacheHandler, AutoloadCacheProperties config) {
         this.cacheHandler=cacheHandler;
+        this.config=config;
     }
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
+        if(!this.config.isEnable()) {
+            return invocation.proceed();
+        }
         Class<?> cls=AopUtil.getTargetClass(invocation.getThis());
         Method method=invocation.getMethod();
         if(!cls.equals(invocation.getThis().getClass())) {

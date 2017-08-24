@@ -38,6 +38,9 @@ public class AutoloadCacheAutoConfigure {
 
     private static final String VALIDATOR_BEAN_NAME="autoloadCacheAutoConfigurationValidator";
 
+    @Autowired
+    private AutoloadCacheProperties config;
+
     @Bean(name=VALIDATOR_BEAN_NAME)
     public CacheManagerValidator autoloadCacheAutoConfigurationValidator() {
         return new CacheManagerValidator();
@@ -54,19 +57,19 @@ public class AutoloadCacheAutoConfigure {
     @Bean
     @ConditionalOnBean(CacheHandler.class)
     public CacheMethodInterceptor autoloadCacheMethodInterceptor(CacheHandler cacheHandler) {
-        return new CacheMethodInterceptor(cacheHandler);
+        return new CacheMethodInterceptor(cacheHandler, config);
     }
 
     @Bean
     @ConditionalOnBean(CacheHandler.class)
     public CacheDeleteInterceptor autoloadCacheDeleteInterceptor(CacheHandler cacheHandler) {
-        return new CacheDeleteInterceptor(cacheHandler);
+        return new CacheDeleteInterceptor(cacheHandler, config);
     }
 
     @Bean
     @ConditionalOnBean(CacheHandler.class)
     public CacheDeleteTransactionalInterceptor autoloadCacheDeleteTransactionalInterceptor(CacheHandler cacheHandler) {
-        return new CacheDeleteTransactionalInterceptor(cacheHandler);
+        return new CacheDeleteTransactionalInterceptor(cacheHandler, config);
     }
 
     // 2.配置Advisor
@@ -97,7 +100,7 @@ public class AutoloadCacheAutoConfigure {
     // 3.配置ProxyCreator
     @Bean
     @ConditionalOnBean(CacheHandler.class)
-    public AbstractAdvisorAutoProxyCreator autoloadCacheAutoProxyCreator(AutoloadCacheProperties config) {
+    public AbstractAdvisorAutoProxyCreator autoloadCacheAutoProxyCreator() {
         DefaultAdvisorAutoProxyCreator proxy=new DefaultAdvisorAutoProxyCreator();
         proxy.setAdvisorBeanNamePrefix("autoloadCache");
         proxy.setProxyTargetClass(config.isProxyTargetClass());
