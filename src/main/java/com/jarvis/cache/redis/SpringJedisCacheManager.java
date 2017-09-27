@@ -15,11 +15,9 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisConnectionUtils;
 
 import com.jarvis.cache.ICacheManager;
-import com.jarvis.cache.clone.ICloner;
 import com.jarvis.cache.exception.CacheCenterConnectionException;
 import com.jarvis.cache.serializer.ISerializer;
 import com.jarvis.cache.serializer.StringSerializer;
-import com.jarvis.cache.to.AutoLoadConfig;
 import com.jarvis.cache.to.CacheKeyTO;
 import com.jarvis.cache.to.CacheWrapper;
 
@@ -38,10 +36,6 @@ public class SpringJedisCacheManager implements ICacheManager {
 
     private final ISerializer<Object> serializer;
 
-    private final ICloner cloner;
-
-    private final AutoLoadConfig config;
-
     private JedisConnectionFactory redisConnectionFactory;
 
     /**
@@ -54,10 +48,8 @@ public class SpringJedisCacheManager implements ICacheManager {
      */
     private boolean hashExpireByScript=false;
 
-    public SpringJedisCacheManager(AutoLoadConfig config, ISerializer<Object> serializer) {
-        this.config=config;
+    public SpringJedisCacheManager(ISerializer<Object> serializer) {
         this.serializer=serializer;
-        this.cloner=serializer;
     }
 
     public JedisConnectionFactory getRedisConnectionFactory() {
@@ -84,9 +76,9 @@ public class SpringJedisCacheManager implements ICacheManager {
             String hfield=cacheKeyTO.getHfield();
             if(null == hfield || hfield.length() == 0) {
                 if(expire == 0) {
-                    jedis.set(keySerializer.serialize(cacheKey), getSerializer().serialize(result));
+                    jedis.set(keySerializer.serialize(cacheKey), serializer.serialize(result));
                 } else if(expire > 0) {
-                    jedis.setex(keySerializer.serialize(cacheKey), expire, getSerializer().serialize(result));
+                    jedis.setex(keySerializer.serialize(cacheKey), expire, serializer.serialize(result));
                 }
             } else {
                 hashSet(jedis, cacheKey, hfield, result);
@@ -114,7 +106,7 @@ public class SpringJedisCacheManager implements ICacheManager {
     private void hashSet(Jedis jedis, String cacheKey, String hfield, CacheWrapper<Object> result) throws Exception {
         byte[] key=keySerializer.serialize(cacheKey);
         byte[] field=keySerializer.serialize(hfield);
-        byte[] val=getSerializer().serialize(result);
+        byte[] val=serializer.serialize(result);
         int hExpire;
         if(hashExpire < 0) {
             hExpire=result.getExpire();
@@ -180,7 +172,7 @@ public class SpringJedisCacheManager implements ICacheManager {
                 bytes=jedis.hget(keySerializer.serialize(cacheKey), keySerializer.serialize(hfield));
             }
             Type returnType=method.getGenericReturnType();
-            res=(CacheWrapper<Object>)getSerializer().deserialize(bytes, returnType);
+            res=(CacheWrapper<Object>)serializer.deserialize(bytes, returnType);
         } catch(Exception ex) {
             logger.error(ex.getMessage(), ex);
         } finally {
@@ -295,18 +287,4 @@ public class SpringJedisCacheManager implements ICacheManager {
         this.hashExpireByScript=hashExpireByScript;
     }
 
-    @Override
-    public ICloner getCloner() {
-        return this.cloner;
-    }
-
-    @Override
-    public ISerializer<Object> getSerializer() {
-        return this.serializer;
-    }
-
-    @Override
-    public AutoLoadConfig getAutoLoadConfig() {
-        return this.config;
-    }
 }

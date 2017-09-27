@@ -115,7 +115,7 @@ public class AutoloadCacheManageConfiguration {
                 JedisCluster jedisCluster=null;
                 jedisCluster=(JedisCluster)redisClusterConnection.getNativeConnection();
                 if(null != jedisCluster) {
-                    JedisClusterCacheManager manager=new JedisClusterCacheManager(config.getConfig(), serializer);
+                    JedisClusterCacheManager manager=new JedisClusterCacheManager(serializer);
                     manager.setJedisCluster(jedisCluster);
                     // 根据需要自行配置
                     manager.setHashExpire(config.getJedis().getHashExpire());
@@ -124,7 +124,7 @@ public class AutoloadCacheManageConfiguration {
                     return manager;
                 }
             } else if(redisConnection instanceof JedisConnection) {
-                SpringJedisCacheManager manager=new SpringJedisCacheManager(config.getConfig(), serializer);
+                SpringJedisCacheManager manager=new SpringJedisCacheManager(serializer);
                 manager.setRedisConnectionFactory((JedisConnectionFactory)connectionFactory);
                 // 根据需要自行配置
                 manager.setHashExpire(config.getJedis().getHashExpire());

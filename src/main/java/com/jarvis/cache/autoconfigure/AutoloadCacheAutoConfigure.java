@@ -19,6 +19,7 @@ import com.jarvis.cache.ICacheManager;
 import com.jarvis.cache.annotation.Cache;
 import com.jarvis.cache.annotation.CacheDelete;
 import com.jarvis.cache.annotation.CacheDeleteTransactional;
+import com.jarvis.cache.clone.ICloner;
 import com.jarvis.cache.interceptor.CacheDeleteInterceptor;
 import com.jarvis.cache.interceptor.CacheDeleteTransactionalInterceptor;
 import com.jarvis.cache.interceptor.CacheMethodInterceptor;
@@ -47,10 +48,10 @@ public class AutoloadCacheAutoConfigure {
     }
 
     @ConditionalOnMissingBean(CacheHandler.class)
-    @ConditionalOnBean({ICacheManager.class, AbstractScriptParser.class})
+    @ConditionalOnBean({ICacheManager.class, AbstractScriptParser.class, ICloner.class})
     @Bean(destroyMethod="destroy")
-    public CacheHandler autoloadCacheHandler(ICacheManager cacheManager, AbstractScriptParser scriptParser) {
-        return new CacheHandler(cacheManager, scriptParser);
+    public CacheHandler autoloadCacheHandler(ICacheManager cacheManager, AbstractScriptParser scriptParser, ICloner cloner ) {
+        return new CacheHandler(cacheManager, scriptParser, config.getConfig(), cloner);
     }
 
     // 1. 创建通知
