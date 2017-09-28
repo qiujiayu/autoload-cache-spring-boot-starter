@@ -4,35 +4,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jarvis.cache.annotation.CacheDeleteTransactional;
-import com.jarvis.cache.demo.dao.UserDAO;
-import com.jarvis.cache.demo.mapper.ClientUpgradeMapper;
-import com.jarvis.cache.demo.to.User;
+import com.jarvis.cache.demo.entity.UserDO;
+import com.jarvis.cache.demo.mapper.UserMapper;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserDAO userDAO;
-
-    @Autowired
-    private ClientUpgradeMapper clientUpgradeMapper;
+    private UserMapper userMapper;
 
     @Override
-    public User getUserById(Integer id) {
-        // 测试Mybatis
-        System.out.println(clientUpgradeMapper.getById(83));
-        return userDAO.getUserById(id);
+    public UserDO getUserById(Integer id) {
+        return userMapper.getById(id);
+    }
+    
+    @Override
+    public void add(UserDO user) {
+        userMapper.addUser(user);
     }
 
     @Override
-    public void updateUser(User user) {
-        userDAO.updateUser(user);
-    }
-
     @CacheDeleteTransactional
-    @Override
-    public void updateUser2(User user) {
-        userDAO.updateUser(user);
+    public void updateUser(UserDO user) {
+        userMapper.updateUser(user);
     }
 
 }

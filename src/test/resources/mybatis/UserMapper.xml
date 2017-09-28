@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jarvis.cache.demo.mapper.UserMapper">
+
+  <resultMap id="UserResultMap" type="com.jarvis.cache.demo.entity.UserDO">
+    <id column="id" property="id" />
+    <result column="name" property="name" />
+    <result column="password" property="password" />
+    <result column="age" property="age" />
+  </resultMap>
+  
+  <sql id="columns">
+    id, name, password, age
+  </sql>
+  
+  <select id="getById" parameterType="java.lang.Integer" resultMap="UserResultMap">
+    select
+    <include refid="columns" />
+    from user
+    where id = #{id}
+  </select>
+
+  <insert id="addUser" parameterType="com.jarvis.cache.demo.entity.UserDO" useGeneratedKeys="true" keyProperty="id">
+    insert into user(name, password, age) 
+    values(#{name}, #{password}, #{age})
+  </insert>
+  
+  <update id="updateUser" parameterType="com.jarvis.cache.demo.entity.UserDO">
+    update user 
+    <set>
+      <if test="name != null and name != ''"> name = #{name},</if>
+      <if test="password != null and password != ''"> password = #{password}, </if>
+      <if test="age != null"> age = #{age},</if>
+    </set>
+    where id = #{id}
+  </update>
+</mapper>

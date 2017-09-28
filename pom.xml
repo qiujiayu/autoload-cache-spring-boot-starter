@@ -84,14 +84,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.alibaba</groupId>
-      <artifactId>druid-spring-boot-starter</artifactId>
-      <version>1.1.0</version>
+      <groupId>com.h2database</groupId>  
+      <artifactId>h2</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

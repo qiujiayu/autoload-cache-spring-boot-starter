@@ -19,3 +19,4 @@
 hs_err_pid*
 /.apt_generated/
 .springBeans
+*.DS_Store

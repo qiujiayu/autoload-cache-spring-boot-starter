@@ -1,8 +1,8 @@
-package com.jarvis.cache.demo.to;
+package com.jarvis.cache.demo.entity;
 
 import java.io.Serializable;
 
-public class User implements Serializable {
+public class UserDO implements Serializable {
 
     private static final long serialVersionUID=1932703849895844645L;
 

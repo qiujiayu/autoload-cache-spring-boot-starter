@@ -5,32 +5,37 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jarvis.cache.demo.entity.UserDO;
 import com.jarvis.cache.demo.service.UserService;
-import com.jarvis.cache.demo.to.User;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @RequestMapping("/user/{id}")
-    public User list(@PathVariable Integer id) {
-        System.out.println("getuser" + id);
+    @RequestMapping("/{id}")
+    public UserDO list(@PathVariable Integer id) {
         return userService.getUserById(id);
     }
 
-    @RequestMapping("/update1/{id}")
-    public void update1(@PathVariable Integer id) {
-        User user=new User();
+    @RequestMapping("/add")
+    public UserDO add() {
+        UserDO user=new UserDO();
+        user.setName("name_"+System.currentTimeMillis());
+        user.setPassword("11111");
+        user.setAge(20);
+        userService.add(user);
+        return user;
+    }
+    
+    @RequestMapping("/update/{id}")
+    public void update(@PathVariable Integer id) {
+        UserDO user=new UserDO();
         user.setId(id);
+        user.setName("name:"+id);
         userService.updateUser(user);
     }
 
-    @RequestMapping("/update2/{id}")
-    public void update2(@PathVariable Integer id) {
-        User user=new User();
-        user.setId(id);
-        userService.updateUser2(user);
-    }
 }

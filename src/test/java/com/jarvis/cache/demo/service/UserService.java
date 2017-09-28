@@ -1,12 +1,13 @@
 package com.jarvis.cache.demo.service;
 
-import com.jarvis.cache.demo.to.User;
+import com.jarvis.cache.demo.entity.UserDO;
 
 public interface UserService {
 
-    User getUserById(Integer id);
+    UserDO getUserById(Integer id);
 
-    void updateUser(User user);
+    void updateUser(UserDO user);
 
-    void updateUser2(User user);
+    void add(UserDO user);
+
 }

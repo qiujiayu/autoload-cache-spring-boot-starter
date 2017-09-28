@@ -7,6 +7,11 @@ import com.jarvis.cache.annotation.CacheDelete;
 import com.jarvis.cache.annotation.CacheDeleteKey;
 import com.jarvis.cache.demo.to.User;
 
+/**
+ * 在Class中使用注解的例子
+ * @author jiayu.qiu
+ *
+ */
 @Component
 public class UserDAO {
 
