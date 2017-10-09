@@ -33,7 +33,7 @@ import com.jarvis.cache.serializer.ISerializer;
  * @author jiayu.qiu
  */
 @Configuration
-@ConditionalOnClass(com.jarvis.cache.CacheHandler.class)
+@ConditionalOnClass(name="com.jarvis.cache.CacheHandler")
 @AutoConfigureAfter(AutoloadCacheManageConfiguration.class)
 public class AutoloadCacheAutoConfigure {
 
