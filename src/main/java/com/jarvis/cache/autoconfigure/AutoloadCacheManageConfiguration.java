@@ -87,7 +87,7 @@ public class AutoloadCacheManageConfiguration {
      * 默认只支持{@link JedisClusterCacheManager JedisClusterCacheManager}<br>
      * @param config
      * @param serializer
-     * @param connectionFactory
+     * @param applicationContext
      * @return
      */
     @Bean
