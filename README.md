@@ -19,4 +19,6 @@
 
 ### 3. 依赖注入请参考[AutoloadCacheManageConfiguration](src/main/java/com/jarvis/cache/autoconfigure/AutoloadCacheManageConfiguration.java)
 
+如果出现AOP相关的错误，参考[https://github.com/qiujiayu/autoload-cache-spring-boot-starter/issues/1](https://github.com/qiujiayu/autoload-cache-spring-boot-starter/issues/1)
+
 QQ群：429274886

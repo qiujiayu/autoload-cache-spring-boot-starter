@@ -6,23 +6,40 @@
     <id column="id" property="id" />
     <result column="name" property="name" />
     <result column="password" property="password" />
-    <result column="age" property="age" />
+    <result column="status" property="status" />
   </resultMap>
   
   <sql id="columns">
-    id, name, password, age
+    id, name, password, status
   </sql>
   
-  <select id="getById" parameterType="java.lang.Integer" resultMap="UserResultMap">
+  <select id="getUserById" parameterType="java.lang.Long" resultMap="UserResultMap">
     select
     <include refid="columns" />
     from user
     where id = #{id}
   </select>
+  
+  <select id="getUserIdByName" parameterType="java.lang.String" resultType="java.lang.Long">
+    select id from user
+    where name = #{name}
+  </select>
+  
+  <select id="listIdsByCondition" parameterType="com.jarvis.cache.demo.condition.UserCondition" resultType="java.lang.Long">
+    select id  from user
+    <where>
+      <if test="id != null"> and id = #{id}</if>
+      <if test="name != null and name != ''"> and name like concat('%', #{name}, '%') </if>
+      <if test="password != null and password != ''"> and password = #{password} </if>
+      <if test="status != null"> and status = #{status}</if>
+    </where>
+    order by id desc
+    limit #{pageable.pageSize} offset #{pageable.offset}
+  </select>
 
   <insert id="addUser" parameterType="com.jarvis.cache.demo.entity.UserDO" useGeneratedKeys="true" keyProperty="id">
-    insert into user(name, password, age) 
-    values(#{name}, #{password}, #{age})
+    insert into user(name, password, status) 
+    values(#{name}, #{password}, 1)
   </insert>
   
   <update id="updateUser" parameterType="com.jarvis.cache.demo.entity.UserDO">
@@ -30,8 +47,12 @@
     <set>
       <if test="name != null and name != ''"> name = #{name},</if>
       <if test="password != null and password != ''"> password = #{password}, </if>
-      <if test="age != null"> age = #{age},</if>
+      <if test="status != null"> status = #{status},</if>
     </set>
     where id = #{id}
+  </update>
+  
+  <update id="deleteUserById" parameterType="java.lang.Long">
+    update user set status = 0 where id = #{id}
   </update>
 </mapper>

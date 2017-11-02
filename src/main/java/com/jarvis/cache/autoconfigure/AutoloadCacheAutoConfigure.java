@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Assert;
@@ -35,6 +36,7 @@ import com.jarvis.cache.serializer.ISerializer;
 @Configuration
 @ConditionalOnClass(name="com.jarvis.cache.CacheHandler")
 @AutoConfigureAfter(AutoloadCacheManageConfiguration.class)
+@ConditionalOnProperty(value = "autoload.cache.enable", matchIfMissing = true)
 public class AutoloadCacheAutoConfigure {
 
     private static final String VALIDATOR_BEAN_NAME="autoloadCacheAutoConfigurationValidator";

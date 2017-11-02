@@ -16,7 +16,7 @@ public class UserController {
     private UserService userService;
 
     @RequestMapping("/{id}")
-    public UserDO list(@PathVariable Integer id) {
+    public UserDO list(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
@@ -25,13 +25,12 @@ public class UserController {
         UserDO user=new UserDO();
         user.setName("name_"+System.currentTimeMillis());
         user.setPassword("11111");
-        user.setAge(20);
-        userService.add(user);
+        userService.register(user);
         return user;
     }
     
     @RequestMapping("/update/{id}")
-    public void update(@PathVariable Integer id) {
+    public void update(@PathVariable Long id) {
         UserDO user=new UserDO();
         user.setId(id);
         user.setName("name:"+id);
