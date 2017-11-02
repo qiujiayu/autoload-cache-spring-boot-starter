@@ -45,7 +45,6 @@
   <update id="updateUser" parameterType="com.jarvis.cache.demo.entity.UserDO">
     update user 
     <set>
-      <if test="name != null and name != ''"> name = #{name},</if>
       <if test="password != null and password != ''"> password = #{password}, </if>
       <if test="status != null"> status = #{status},</if>
     </set>
