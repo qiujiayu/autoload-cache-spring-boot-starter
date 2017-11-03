@@ -3,5 +3,5 @@ language: java
 
 install:
   - jdk_switcher use oraclejdk8
-  - mvn clean install -DskipTests=true
+  - mvn clean install -DskipTests=true -Dmaven.test.skip=true
 
