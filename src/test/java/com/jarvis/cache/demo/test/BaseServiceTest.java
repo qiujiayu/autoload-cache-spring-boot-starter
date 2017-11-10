@@ -3,6 +3,7 @@ package com.jarvis.cache.demo.test;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +33,10 @@ public class BaseServiceTest {
     @Before
     public void setup() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+    }
+    
+    @Test
+    public void test() {
+        
     }
 }
