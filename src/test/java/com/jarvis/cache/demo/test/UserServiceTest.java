@@ -36,10 +36,10 @@ public class UserServiceTest extends BaseServiceTest {
         userDO = UserDO.builder().name("tmp2").password("aaaa2").build();
         userId = userService.register(userDO);
         
-        userDO = UserDO.builder().id(userId).name("tmp3").password("aaaa3").build();
+        userDO = UserDO.builder().id(userId).name("tmp2").password("aaaa3").build();
         userService.updateUser(userDO);
 
-        userService.doLogin("tmp3", "aaaa3");
+        userService.doLogin("tmp2", "aaaa3");
         
         
         UserCondition condition = new UserCondition();
@@ -52,6 +52,8 @@ public class UserServiceTest extends BaseServiceTest {
             System.out.println("list item --->" + user);
         }
 
+        userDO = userService.getUserById(userId);
+        System.out.println("detail-->" + userDO);
         userDO = userService.getUserById(userId);
         System.out.println("detail-->" + userDO);
     }
