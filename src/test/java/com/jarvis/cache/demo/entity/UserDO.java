@@ -15,12 +15,12 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 public class UserDO implements Serializable {
 
-    private static final long serialVersionUID=1932703849895844645L;
+    private static final long serialVersionUID = 1932703849895844645L;
 
     private Long id;
 
     private String name;
-    
+
     private String password;
 
     private Integer status;

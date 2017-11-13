@@ -8,8 +8,9 @@ import com.jarvis.cache.autoconfigure.AutoloadCacheProperties;
 import com.jarvis.cache.clone.ICloner;
 import com.jarvis.cache.map.MapCacheManager;
 
-/**  
+/**
  * 为了方便测试，使用配置缓存
+ * 
  * @author: jiayu.qiu
  */
 @Configuration

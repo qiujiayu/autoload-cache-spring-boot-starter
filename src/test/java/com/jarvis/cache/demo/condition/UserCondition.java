@@ -9,11 +9,11 @@ import lombok.EqualsAndHashCode;
 
 /**
  * 查询条件
+ * 
  * @author jiayu.qiu
- *
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public class UserCondition extends UserDO {
 
     private static final long serialVersionUID = -5111314038991538777L;

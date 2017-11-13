@@ -17,7 +17,6 @@ import com.jarvis.cache.demo.condition.UserCondition;
 import com.jarvis.cache.demo.entity.UserDO;
 import com.jarvis.cache.demo.service.UserService;
 
-
 /**
  * @author: jiayu.qiu
  */
@@ -32,16 +31,15 @@ public class UserServiceTest extends BaseServiceTest {
     public void test1Add() throws Exception {
         UserDO userDO = UserDO.builder().name("tmp").password("aaaa").build();
         Long userId = userService.register(userDO);
-        
+
         userDO = UserDO.builder().name("tmp2").password("aaaa2").build();
         userId = userService.register(userDO);
-        
+
         userDO = UserDO.builder().id(userId).name("tmp2").password("aaaa3").build();
         userService.updateUser(userDO);
 
         userService.doLogin("tmp2", "aaaa3");
-        
-        
+
         UserCondition condition = new UserCondition();
         Pageable pageable = new PageRequest(1, 10);
         condition.setPageable(pageable);

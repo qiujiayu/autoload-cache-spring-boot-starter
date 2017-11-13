@@ -13,7 +13,7 @@ import com.jarvis.cache.demo.entity.UserDO;
 import com.jarvis.cache.demo.mapper.UserMapper;
 
 @Service
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -23,26 +23,31 @@ public class UserServiceImpl implements UserService {
     public UserDO getUserById(Long id) {
         return userMapper.getUserById(id);
     }
-    
+
     @Override
     public List<UserDO> listByCondition(UserCondition condition) {
-        List<UserDO> list = new ArrayList<>();
         List<Long> ids = userMapper.listIdsByCondition(condition);
-        if(null != ids && ids.size() > 0) {
-            for(Long id : ids) {
-                list.add(userMapper.getUserById(id));
+        List<UserDO> list = null;
+        if (null != ids && ids.size() > 0) {
+            list = new ArrayList<>(ids.size());
+            UserDO userDO = null;
+            for (Long id : ids) {
+                userDO = userMapper.getUserById(id);
+                if (null != userDO) {
+                    list.add(userDO);
+                }
             }
         }
         return list;
     }
-    
+
     @Override
     @CacheDeleteTransactional
-    @Transactional(rollbackFor=Throwable.class)
+    @Transactional(rollbackFor = Throwable.class)
     public Long register(UserDO user) {
         Long userId = userMapper.getUserIdByName(user.getName());
-        if(null != userId) {
-           throw new RuntimeException("用户名已被占用！");
+        if (null != userId) {
+            throw new RuntimeException("用户名已被占用！");
         }
         userMapper.addUser(user);
         return user.getId();
@@ -51,29 +56,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDO doLogin(String name, String password) {
         Long userId = userMapper.getUserIdByName(name);
-        if(null == userId) {
+        if (null == userId) {
             throw new RuntimeException("用户不存在！");
         }
         UserDO user = userMapper.getUserById(userId);
-        if(null == user) {
+        if (null == user) {
             throw new RuntimeException("用户不存在！");
         }
-        if(!user.getPassword().equals(password)) {
+        if (!user.getPassword().equals(password)) {
             throw new RuntimeException("密码不正确！");
         }
         return user;
     }
-    
+
     @Override
     @CacheDeleteTransactional
-    @Transactional(rollbackFor=Throwable.class)
+    @Transactional(rollbackFor = Throwable.class)
     public void updateUser(UserDO user) {
         userMapper.updateUser(user);
     }
 
     @Override
     @CacheDeleteTransactional
-    @Transactional(rollbackFor=Throwable.class)
+    @Transactional(rollbackFor = Throwable.class)
     public void deleteUserById(Long userId) {
         userMapper.deleteUserById(userId);
     }

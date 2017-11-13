@@ -22,18 +22,18 @@ public class UserController {
 
     @RequestMapping("/add")
     public UserDO add() {
-        UserDO user=new UserDO();
-        user.setName("name_"+System.currentTimeMillis());
+        UserDO user = new UserDO();
+        user.setName("name_" + System.currentTimeMillis());
         user.setPassword("11111");
         userService.register(user);
         return user;
     }
-    
+
     @RequestMapping("/update/{id}")
     public void update(@PathVariable Long id) {
-        UserDO user=new UserDO();
+        UserDO user = new UserDO();
         user.setId(id);
-        user.setName("name:"+id);
+        user.setName("name:" + id);
         userService.updateUser(user);
     }
 

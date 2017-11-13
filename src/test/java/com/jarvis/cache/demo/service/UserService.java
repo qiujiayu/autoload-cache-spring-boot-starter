@@ -10,9 +10,9 @@ public interface UserService {
     UserDO getUserById(Long userId);
 
     List<UserDO> listByCondition(UserCondition condition);
-    
+
     Long register(UserDO user);
-    
+
     UserDO doLogin(String name, String password);
 
     void updateUser(UserDO user);
