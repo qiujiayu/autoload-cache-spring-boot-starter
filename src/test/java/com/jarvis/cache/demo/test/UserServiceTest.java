@@ -41,7 +41,7 @@ public class UserServiceTest extends BaseServiceTest {
         userService.doLogin("tmp2", "aaaa3");
 
         UserCondition condition = new UserCondition();
-        Pageable pageable = new PageRequest(1, 10);
+        Pageable pageable = new PageRequest(0, 10);
         condition.setPageable(pageable);
 
         List<UserDO> list = userService.listByCondition(condition);
