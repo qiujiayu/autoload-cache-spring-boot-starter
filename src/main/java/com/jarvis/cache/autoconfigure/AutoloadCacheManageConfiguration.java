@@ -3,6 +3,7 @@ package com.jarvis.cache.autoconfigure;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -38,6 +39,7 @@ import redis.clients.jedis.JedisCluster;
 @ConditionalOnClass(name="com.jarvis.cache.ICacheManager")
 @EnableConfigurationProperties(AutoloadCacheProperties.class)
 @AutoConfigureAfter(RedisAutoConfiguration.class)
+@ConditionalOnProperty(value = "autoload.cache.enable", matchIfMissing = true)
 public class AutoloadCacheManageConfiguration {
 
     private static final boolean ognlPresent=ClassUtils.isPresent("ognl.Ognl", AutoloadCacheManageConfiguration.class.getClassLoader());

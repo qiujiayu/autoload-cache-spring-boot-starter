@@ -6,6 +6,7 @@ import org.springframework.aop.framework.autoproxy.AbstractAdvisorAutoProxyCreat
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -69,7 +70,7 @@ public class AutoloadCacheAutoConfigure {
         return new CacheDeleteInterceptor(cacheHandler, config);
     }
 
-    @Bean
+    @Bean("autoloadCacheDeleteTransactionalInterceptor")
     @ConditionalOnBean(CacheHandler.class)
     public CacheDeleteTransactionalInterceptor autoloadCacheDeleteTransactionalInterceptor(CacheHandler cacheHandler) {
         return new CacheDeleteTransactionalInterceptor(cacheHandler, config);
@@ -80,7 +81,7 @@ public class AutoloadCacheAutoConfigure {
     @ConditionalOnBean(CacheHandler.class)
     public AbstractPointcutAdvisor autoloadCacheAdvisor(CacheMethodInterceptor cacheMethodInterceptor) {
         AbstractPointcutAdvisor cacheAdvisor=new MethodAnnotationPointcutAdvisor(Cache.class, cacheMethodInterceptor);
-        cacheAdvisor.setOrder(Integer.MAX_VALUE);
+        cacheAdvisor.setOrder(config.getCacheOrder());
         return cacheAdvisor;
     }
 
@@ -88,15 +89,15 @@ public class AutoloadCacheAutoConfigure {
     @ConditionalOnBean(CacheHandler.class)
     public AbstractPointcutAdvisor autoloadCacheDeleteAdvisor(CacheDeleteInterceptor cacheDeleteInterceptor) {
         AbstractPointcutAdvisor cacheDeleteAdvisor=new MethodAnnotationPointcutAdvisor(CacheDelete.class, cacheDeleteInterceptor);
-        cacheDeleteAdvisor.setOrder(Integer.MAX_VALUE);
+        cacheDeleteAdvisor.setOrder(config.getDeleteCacheOrder());
         return cacheDeleteAdvisor;
     }
 
     @Bean("autoloadCacheDeleteTransactionalAdvisor")
     @ConditionalOnBean(CacheHandler.class)
-    public AbstractPointcutAdvisor autoloadCacheDeleteTransactionalAdvisor(CacheDeleteTransactionalInterceptor cacheDeleteTransactionalInterceptor) {
+    public AbstractPointcutAdvisor autoloadCacheDeleteTransactionalAdvisor(@Qualifier("autoloadCacheDeleteTransactionalInterceptor") CacheDeleteTransactionalInterceptor cacheDeleteTransactionalInterceptor) {
         AbstractPointcutAdvisor cacheDeleteTransactionalAdvisor=new MethodAnnotationPointcutAdvisor(CacheDeleteTransactional.class, cacheDeleteTransactionalInterceptor);
-        cacheDeleteTransactionalAdvisor.setOrder(Integer.MAX_VALUE);
+        cacheDeleteTransactionalAdvisor.setOrder(config.getDeleteCacheTransactionalOrder());
         return cacheDeleteTransactionalAdvisor;
     }
 
