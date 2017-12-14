@@ -3,7 +3,7 @@
 
   <groupId>com.github.qiujiayu</groupId>
   <artifactId>autoload-cache-spring-boot-starter</artifactId>
-  <version>6.7</version>
+  <version>6.7.1</version>
   <packaging>jar</packaging>
   <name>spring-boot-autoload-cache-starter</name>
   <description>autoload-cache spring boot starter.</description>
