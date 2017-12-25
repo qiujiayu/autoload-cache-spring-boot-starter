@@ -96,7 +96,12 @@ public class AutoloadCacheManageConfiguration {
     @ConditionalOnMissingBean(ICacheManager.class)
     @ConditionalOnClass(name="org.springframework.data.redis.connection.RedisConnectionFactory")
     public ICacheManager autoloadCacheCacheManager(AutoloadCacheProperties config, ISerializer<Object> serializer, ApplicationContext applicationContext) {
-        RedisConnectionFactory connectionFactory=applicationContext.getBean(RedisConnectionFactory.class);
+        RedisConnectionFactory connectionFactory = null;
+        try {
+            connectionFactory = applicationContext.getBean(RedisConnectionFactory.class);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
         if(null == connectionFactory) {
             return null;
         }
