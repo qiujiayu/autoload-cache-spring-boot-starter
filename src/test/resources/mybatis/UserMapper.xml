@@ -20,6 +20,13 @@
     where id = #{id}
   </select>
   
+  <select id="getById" parameterType="java.lang.Long" resultMap="UserResultMap">
+    select
+    <include refid="columns" />
+    from user
+    where id = #{id}
+  </select>
+  
   <select id="getUserIdByName" parameterType="java.lang.String" resultType="java.lang.Long">
     select id from user
     where name = #{name}

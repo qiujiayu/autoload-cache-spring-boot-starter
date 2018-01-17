@@ -7,6 +7,7 @@ import com.jarvis.cache.annotation.CacheDelete;
 import com.jarvis.cache.annotation.CacheDeleteKey;
 import com.jarvis.cache.demo.condition.UserCondition;
 import com.jarvis.cache.demo.entity.UserDO;
+import com.jarvis.cache.demo.mapper.temp.BaseMapper;
 
 /**
  * 在接口中使用注解的例子 业务背景：用户表中有id, name, password,
@@ -14,8 +15,12 @@ import com.jarvis.cache.demo.entity.UserDO;
  * 
  * @author jiayu.qiu
  */
-public interface UserMapper {
-
+public interface UserMapper  extends BaseMapper<UserDO, Long>{
+    String CACHE_NAME = "user2";
+    
+    default String getCacheName() {
+        return CACHE_NAME;
+    }
     /**
      * 根据用户id获取用户信息
      * 
