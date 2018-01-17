@@ -24,10 +24,9 @@ public class DeleteCacheAopProxy implements DeleteCacheAopProxyChain {
         return invocation.getArguments();
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public Class getTargetClass() {
-        return invocation.getThis().getClass();
+    public Object getTarget() {
+        return invocation.getThis();
     }
 
     @Override
