@@ -23,6 +23,8 @@
 
 ### 4. 管理工具
 
+通过[http://localhost:8080/autoload-cache-ui.html](http://localhost:8080/autoload-cache-ui.html) 进入管理页面：
+
 ![autoload-cache-ui.html](./doc/autoload-cache-ui.html.png)
 
 QQ群：429274886
