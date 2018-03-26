@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
 
+import com.jarvis.cache.autoconfigure.AutoloadCacheProperties;
+
 /**
  * @author: jiayu.qiu
  */
@@ -21,8 +23,11 @@ public class HTTPBasicAuthorizeAttribute implements Filter {
 
     private static final String SESSION_AUTH_ATTRIBUTE = "autoload-cache-auth";
 
-    private String userName = "admin";
-    private String password = "admin";
+    private final AutoloadCacheProperties properties;
+    
+    public HTTPBasicAuthorizeAttribute(AutoloadCacheProperties properties) {
+        this.properties = properties;
+    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -49,9 +54,11 @@ public class HTTPBasicAuthorizeAttribute implements Filter {
     }
 
     private boolean checkHeaderAuth(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String userName = properties.getAdminUserName();
         if (null == userName || userName.isEmpty()) {
             return true;
         }
+        String password = properties.getAdminPassword();
         String auth = request.getHeader("Authorization");
         if ((auth != null) && (auth.length() > 6)) {
             auth = auth.substring(6, auth.length());

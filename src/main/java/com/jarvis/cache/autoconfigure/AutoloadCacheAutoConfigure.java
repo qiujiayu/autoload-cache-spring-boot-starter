@@ -123,7 +123,7 @@ public class AutoloadCacheAutoConfigure {
     @ConditionalOnWebApplication
     public FilterRegistrationBean  filterRegistrationBean() {  
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();  
-        HTTPBasicAuthorizeAttribute httpBasicFilter = new HTTPBasicAuthorizeAttribute();  
+        HTTPBasicAuthorizeAttribute httpBasicFilter = new HTTPBasicAuthorizeAttribute(config);  
         registrationBean.setFilter(httpBasicFilter);  
         List<String> urlPatterns = new ArrayList<String>();  
         urlPatterns.add("/autoload-cache-ui.html"); 

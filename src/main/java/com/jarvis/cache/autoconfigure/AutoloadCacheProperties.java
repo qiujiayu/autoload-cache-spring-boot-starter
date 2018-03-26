@@ -44,6 +44,10 @@ public class AutoloadCacheProperties {
      */
     private Integer deleteCacheTransactionalOrder = 0;
 
+    private String adminUserName = "admin";
+    
+    private String adminPassword = "admin";
+    
     @PostConstruct
     public void init() {
         if (namespaceEnable && null != env) {
