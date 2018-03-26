@@ -20,6 +20,26 @@
     where id = #{id}
   </select>
   
+  <select id="allUsers" resultMap="UserResultMap">
+     select
+     <include refid="columns" />
+     from user
+  </select>
+  
+  <select id="listByCondition" parameterType="com.jarvis.cache.demo.condition.UserCondition" resultMap="UserResultMap">
+    select
+    <include refid="columns" />
+    from user
+    <where>
+      <if test="id != null"> and id = #{id}</if>
+      <if test="name != null and name != ''"> and name like concat('%', #{name}, '%') </if>
+      <if test="password != null and password != ''"> and password = #{password} </if>
+      <if test="status != null"> and status = #{status}</if>
+    </where>
+    order by id desc
+    limit #{pageable.pageSize} offset #{pageable.offset}
+  </select>
+  
   <select id="getById" parameterType="java.lang.Long" resultMap="UserResultMap">
     select
     <include refid="columns" />

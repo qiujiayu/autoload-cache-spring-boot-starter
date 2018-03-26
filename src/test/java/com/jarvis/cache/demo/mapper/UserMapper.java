@@ -29,6 +29,22 @@ public interface UserMapper  extends BaseMapper<UserDO, Long>{
      */
     @Cache(expire = 3600, expireExpression = "null == #retVal ? 600: 3600", key = "'user-byid-' + #args[0]")
     UserDO getUserById(Long id);
+    
+    /**
+     * 
+     * 测试 autoload = true
+     * @return
+     */
+    @Cache(expire = 3600, key = "user-all", autoload = true)
+    List<UserDO> allUsers();
+    
+    /**
+     * 
+     * 测试 autoload = true
+     * @return
+     */
+    @Cache(expire = 1200, key = "'user-list-' + @@hash(#args[0])", autoload = true)
+    List<UserDO> listByCondition(UserCondition condition);
 
     /**
      * 根据用户名获取用户id

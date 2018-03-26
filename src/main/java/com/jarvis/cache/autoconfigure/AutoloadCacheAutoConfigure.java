@@ -1,5 +1,8 @@
 package com.jarvis.cache.autoconfigure;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.aop.framework.autoproxy.AbstractAdvisorAutoProxyCreator;
@@ -12,12 +15,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Assert;
 
 import com.jarvis.cache.CacheHandler;
 import com.jarvis.cache.ICacheManager;
+import com.jarvis.cache.admin.AutoloadCacheController;
+import com.jarvis.cache.admin.HTTPBasicAuthorizeAttribute;
 import com.jarvis.cache.annotation.Cache;
 import com.jarvis.cache.annotation.CacheDelete;
 import com.jarvis.cache.annotation.CacheDeleteTransactional;
@@ -110,6 +117,26 @@ public class AutoloadCacheAutoConfigure {
         proxy.setProxyTargetClass(config.isProxyTargetClass());
         // proxy.setInterceptorNames("cacheAdvisor","cacheDeleteAdvisor","cacheDeleteTransactionalAdvisor");// 注意此处不需要设置，否则会执行两次
         return proxy;
+    }
+    
+    @Bean
+    @ConditionalOnWebApplication
+    public FilterRegistrationBean  filterRegistrationBean() {  
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();  
+        HTTPBasicAuthorizeAttribute httpBasicFilter = new HTTPBasicAuthorizeAttribute();  
+        registrationBean.setFilter(httpBasicFilter);  
+        List<String> urlPatterns = new ArrayList<String>();  
+        urlPatterns.add("/autoload-cache-ui.html"); 
+        urlPatterns.add("/autoload-cache/*");
+        registrationBean.setUrlPatterns(urlPatterns);  
+        return registrationBean;  
+    }
+    
+    @Bean
+    @ConditionalOnWebApplication
+    @ConditionalOnMissingBean(AutoloadCacheController.class)
+    public AutoloadCacheController AutoloadCacheController(CacheHandler autoloadCacheHandler) {
+        return new AutoloadCacheController(autoloadCacheHandler);
     }
 
     static class CacheManagerValidator {
