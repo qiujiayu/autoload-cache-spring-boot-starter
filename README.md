@@ -21,4 +21,8 @@
 
 如果出现AOP相关的错误，参考[https://github.com/qiujiayu/autoload-cache-spring-boot-starter/issues/1](https://github.com/qiujiayu/autoload-cache-spring-boot-starter/issues/1)
 
+### 4. 管理工具
+
+![autoload-cache-ui.html](./doc/autoload-cache-ui.html.png)
+
 QQ群：429274886
