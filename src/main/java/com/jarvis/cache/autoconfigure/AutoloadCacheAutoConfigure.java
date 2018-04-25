@@ -9,7 +9,6 @@ import org.springframework.aop.framework.autoproxy.AbstractAdvisorAutoProxyCreat
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -44,7 +43,7 @@ import com.jarvis.cache.serializer.ISerializer;
 @Configuration
 @ConditionalOnClass(name="com.jarvis.cache.CacheHandler")
 @AutoConfigureAfter(AutoloadCacheManageConfiguration.class)
-@ConditionalOnProperty(value = "autoload.cache.enable", matchIfMissing = true)
+@ConditionalOnProperty(value = AutoloadCacheProperties.PREFIX + ".enable", matchIfMissing = true)
 public class AutoloadCacheAutoConfigure {
 
     private static final String VALIDATOR_BEAN_NAME="autoloadCacheAutoConfigurationValidator";
@@ -57,35 +56,38 @@ public class AutoloadCacheAutoConfigure {
         return new CacheManagerValidator();
     }
 
+    @Bean(destroyMethod="destroy")
     @ConditionalOnMissingBean(CacheHandler.class)
     @ConditionalOnBean({ICacheManager.class, AbstractScriptParser.class, ICloner.class})
-    @Bean(destroyMethod="destroy")
     public CacheHandler autoloadCacheHandler(ICacheManager cacheManager, AbstractScriptParser scriptParser, ICloner cloner ) {
         return new CacheHandler(cacheManager, scriptParser, config.getConfig(), cloner);
     }
 
-    // 1. 创建通知
+    // 1. 创建通知 suixingpay.autoload.cache. 和 suixingpay.autoload.cache.enable-delete
     @Bean
     @ConditionalOnBean(CacheHandler.class)
+    @ConditionalOnProperty(value = AutoloadCacheProperties.PREFIX + ".enable-read-and-write", matchIfMissing = true)
     public CacheMethodInterceptor autoloadCacheMethodInterceptor(CacheHandler cacheHandler) {
         return new CacheMethodInterceptor(cacheHandler, config);
     }
 
     @Bean
     @ConditionalOnBean(CacheHandler.class)
+    @ConditionalOnProperty(value = AutoloadCacheProperties.PREFIX + ".enable-delete", matchIfMissing = true)
     public CacheDeleteInterceptor autoloadCacheDeleteInterceptor(CacheHandler cacheHandler) {
         return new CacheDeleteInterceptor(cacheHandler, config);
     }
 
-    @Bean("autoloadCacheDeleteTransactionalInterceptor")
+    @Bean
     @ConditionalOnBean(CacheHandler.class)
+    @ConditionalOnProperty(value = AutoloadCacheProperties.PREFIX + ".enable-delete", matchIfMissing = true)
     public CacheDeleteTransactionalInterceptor autoloadCacheDeleteTransactionalInterceptor(CacheHandler cacheHandler) {
         return new CacheDeleteTransactionalInterceptor(cacheHandler, config);
     }
 
     // 2.配置Advisor
     @Bean("autoloadCacheAdvisor")
-    @ConditionalOnBean(CacheHandler.class)
+    @ConditionalOnBean(CacheMethodInterceptor.class)
     public AbstractPointcutAdvisor autoloadCacheAdvisor(CacheMethodInterceptor cacheMethodInterceptor) {
         AbstractPointcutAdvisor cacheAdvisor=new MethodAnnotationPointcutAdvisor(Cache.class, cacheMethodInterceptor);
         cacheAdvisor.setOrder(config.getCacheOrder());
@@ -93,7 +95,7 @@ public class AutoloadCacheAutoConfigure {
     }
 
     @Bean("autoloadCacheDeleteAdvisor")
-    @ConditionalOnBean(CacheHandler.class)
+    @ConditionalOnBean(CacheDeleteInterceptor.class)
     public AbstractPointcutAdvisor autoloadCacheDeleteAdvisor(CacheDeleteInterceptor cacheDeleteInterceptor) {
         AbstractPointcutAdvisor cacheDeleteAdvisor=new MethodAnnotationPointcutAdvisor(CacheDelete.class, cacheDeleteInterceptor);
         cacheDeleteAdvisor.setOrder(config.getDeleteCacheOrder());
@@ -101,8 +103,8 @@ public class AutoloadCacheAutoConfigure {
     }
 
     @Bean("autoloadCacheDeleteTransactionalAdvisor")
-    @ConditionalOnBean(CacheHandler.class)
-    public AbstractPointcutAdvisor autoloadCacheDeleteTransactionalAdvisor(@Qualifier("autoloadCacheDeleteTransactionalInterceptor") CacheDeleteTransactionalInterceptor cacheDeleteTransactionalInterceptor) {
+    @ConditionalOnBean(CacheDeleteTransactionalInterceptor.class)
+    public AbstractPointcutAdvisor autoloadCacheDeleteTransactionalAdvisor(CacheDeleteTransactionalInterceptor cacheDeleteTransactionalInterceptor) {
         AbstractPointcutAdvisor cacheDeleteTransactionalAdvisor=new MethodAnnotationPointcutAdvisor(CacheDeleteTransactional.class, cacheDeleteTransactionalInterceptor);
         cacheDeleteTransactionalAdvisor.setOrder(config.getDeleteCacheTransactionalOrder());
         return cacheDeleteTransactionalAdvisor;

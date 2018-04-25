@@ -14,8 +14,10 @@ import lombok.Data;
  * @author jiayu.qiu
  */
 @Data
-@ConfigurationProperties(prefix = "autoload.cache")
+@ConfigurationProperties(prefix = AutoloadCacheProperties.PREFIX)
 public class AutoloadCacheProperties {
+    
+    public static final String PREFIX = "autoload.cache";
 
     private AutoLoadConfig config = new AutoLoadConfig();
 
@@ -29,6 +31,16 @@ public class AutoloadCacheProperties {
     private boolean proxyTargetClass = true;
 
     private boolean enable = true;
+
+    /**
+     * @Cache 注解是否生效, 默认值为true
+     */
+    private boolean enableReadAndWrite = true;
+    
+    /**
+     * @DeleteCache 和 @DeleteCacheTransactional 注解是否生效, 默认值为true
+     */
+    private boolean enableDelete = true;
 
     /**
      * @Cache 注解AOP执行顺序
