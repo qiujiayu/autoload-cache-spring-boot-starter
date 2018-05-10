@@ -90,10 +90,5 @@ public class AutoloadCacheProperties {
          */
         private int hashExpire = -1;
 
-        /**
-         * 是否通过脚本来设置 Hash的缓存时长
-         */
-        private boolean hashExpireByScript = true;
-
     }
 }
