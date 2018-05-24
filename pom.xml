@@ -3,7 +3,7 @@
 
   <groupId>com.github.qiujiayu</groupId>
   <artifactId>autoload-cache-spring-boot-starter</artifactId>
-  <version>6.9.0-SNAPSHOT</version>
+  <version>6.9.0</version>
   <packaging>jar</packaging>
   <name>spring-boot-autoload-cache-starter</name>
   <description>autoload-cache spring boot starter.</description>
@@ -30,7 +30,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
-    <autoload-cache.version>6.9.0-SNAPSHOT</autoload-cache.version>
+    <autoload-cache.version>6.9.0</autoload-cache.version>
     <spring-boot.version>1.4.2.RELEASE</spring-boot.version>
   </properties>
 
