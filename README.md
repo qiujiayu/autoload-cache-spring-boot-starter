@@ -27,4 +27,7 @@
 
 ![autoload-cache-ui.html](./doc/autoload-cache-ui.html.png)
 
+@EnableTransactionManagement(proxyTargetClass = true)时 @Cache注解必须加在类中;
+@EnableTransactionManagement(proxyTargetClass = false)时 @Cache注解必须加在接口中;
+
 QQ群：429274886

@@ -61,7 +61,6 @@ public interface UserMapper  extends BaseMapper<UserDO, Long>{
      * @param condition
      * @return
      **/
-    @Cache(expire = 600, key = "'userid-list-' + @@hash(#args[0])")
     List<Long> listIdsByCondition(UserCondition condition);
 
     /**

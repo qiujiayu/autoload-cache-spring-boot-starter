@@ -12,46 +12,48 @@ import com.jarvis.cache.CacheHandler;
 import com.jarvis.cache.annotation.Cache;
 import com.jarvis.cache.autoconfigure.AutoloadCacheProperties;
 import com.jarvis.cache.interceptor.aopproxy.CacheAopProxy;
-import com.jarvis.cache.util.AopUtil;
 
 /**
  * 对@Cache 拦截注解
+ * 
  * @author jiayu.qiu
  */
 public class CacheMethodInterceptor implements MethodInterceptor {
 
-    private static final Logger logger=LoggerFactory.getLogger(CacheMethodInterceptor.class);
+    private static final Logger logger = LoggerFactory.getLogger(CacheMethodInterceptor.class);
 
     private final CacheHandler cacheHandler;
-    
+
     private final AutoloadCacheProperties config;
 
     public CacheMethodInterceptor(CacheHandler cacheHandler, AutoloadCacheProperties config) {
-        this.cacheHandler=cacheHandler;
-        this.config=config;
+        this.cacheHandler = cacheHandler;
+        this.config = config;
     }
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
-        if(!this.config.isEnable()) {
+        if (!this.config.isEnable()) {
             return invocation.proceed();
         }
-        Class<?> cls=AopUtil.getTargetClass(invocation.getThis());
-        Method method=invocation.getMethod();
-        if(!cls.equals(invocation.getThis().getClass())) {
-            logger.debug(invocation.getThis().getClass() + "-->" + cls);
-            return invocation.proceed();
+        // Class<?> invocationCls = invocation.getClass();
+        Method method = invocation.getMethod();
+        if (logger.isDebugEnabled()) {
+            logger.debug(invocation.toString());
         }
-        logger.debug(invocation.toString());
-        if(method.isAnnotationPresent(Cache.class)) {
-            Cache cache=method.getAnnotation(Cache.class);
-            logger.debug(invocation.getThis().getClass().getName() + "." + method.getName() + "-->@Cache");
+        if (method.isAnnotationPresent(Cache.class)) {
+            Cache cache = method.getAnnotation(Cache.class);
+            if (logger.isDebugEnabled()) {
+                logger.debug(invocation.getThis().getClass().getName() + "." + method.getName() + "-->@Cache");
+            }
             return cacheHandler.proceed(new CacheAopProxy(invocation), cache);
         } else {
-            Method specificMethod=AopUtils.getMostSpecificMethod(method, invocation.getThis().getClass());
-            if(specificMethod.isAnnotationPresent(Cache.class)) {
-                Cache cache=specificMethod.getAnnotation(Cache.class);
-                logger.debug(invocation.getThis().getClass().getName() + "." + specificMethod.getName() + "-->@Cache");
+            Method specificMethod = AopUtils.getMostSpecificMethod(method, invocation.getThis().getClass());
+            if (specificMethod.isAnnotationPresent(Cache.class)) {
+                Cache cache = specificMethod.getAnnotation(Cache.class);
+                if (logger.isDebugEnabled()) {
+                    logger.debug(invocation.getThis().getClass().getName() + "." + specificMethod.getName() + "-->@Cache");
+                }
                 return cacheHandler.proceed(new CacheAopProxy(invocation), cache);
             }
         }

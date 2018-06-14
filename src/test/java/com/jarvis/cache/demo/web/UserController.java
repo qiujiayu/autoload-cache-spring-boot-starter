@@ -1,10 +1,14 @@
 package com.jarvis.cache.demo.web;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jarvis.cache.demo.condition.UserCondition;
 import com.jarvis.cache.demo.entity.UserDO;
 import com.jarvis.cache.demo.service.UserService;
 
@@ -14,13 +18,18 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    
+    @GetMapping()
+    public List<UserDO> list() {
+        return userService.listByCondition(new UserCondition());
+    }
 
-    @RequestMapping("/{id}")
-    public UserDO list(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public UserDO detail(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
-    @RequestMapping("/add")
+    @GetMapping("/add")
     public UserDO add() {
         UserDO user = new UserDO();
         user.setName("name_" + System.currentTimeMillis());
@@ -29,7 +38,7 @@ public class UserController {
         return user;
     }
 
-    @RequestMapping("/update/{id}")
+    @GetMapping("/update/{id}")
     public void update(@PathVariable Long id) {
         UserDO user = new UserDO();
         user.setId(id);
