@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    //@Cache(expire = 600, key = "'userid-list-' + @@hash(#args[0])")
+    @Cache(expire = 600, key = "'userid-list-' + @@hash(#args[0])")
     public List<UserDO> listByCondition(UserCondition condition) {
         List<Long> ids = userMapper.listIdsByCondition(condition);
         List<UserDO> list = null;
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    // @CacheDeleteTransactional
+    @CacheDeleteTransactional
     @Transactional(rollbackFor = Throwable.class)
     public Long register(UserDO user) {
         Long userId = userMapper.getUserIdByName(user.getName());

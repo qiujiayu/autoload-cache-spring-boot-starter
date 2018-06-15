@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.jarvis.cache.demo.condition.UserCondition;
 import com.jarvis.cache.demo.mapper.UserMapper;
 
-@EnableTransactionManagement(proxyTargetClass = false)
+@EnableTransactionManagement(proxyTargetClass = true)
 @SpringBootApplication
 @MapperScan("com.jarvis.cache.demo.mapper")
 public class CacheDemoApplication {
