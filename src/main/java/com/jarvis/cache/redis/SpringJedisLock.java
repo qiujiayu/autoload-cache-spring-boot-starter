@@ -10,7 +10,6 @@ import com.jarvis.cache.lock.AbstractRedisLock;
 
 import redis.clients.jedis.Jedis;
 
-
 public class SpringJedisLock extends AbstractRedisLock {
     private static final Logger logger = LoggerFactory.getLogger(SpringJedisLock.class);
 

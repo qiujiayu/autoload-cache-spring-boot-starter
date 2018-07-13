@@ -16,7 +16,7 @@ public class CacheAopProxy implements CacheAopProxyChain {
     private Method method;
 
     public CacheAopProxy(MethodInvocation invocation) {
-        this.invocation=invocation;
+        this.invocation = invocation;
 
     }
 
@@ -32,8 +32,8 @@ public class CacheAopProxy implements CacheAopProxyChain {
 
     @Override
     public Method getMethod() {
-        if(null == method) {
-            this.method=invocation.getMethod();
+        if (null == method) {
+            this.method = invocation.getMethod();
         }
         return method;
     }

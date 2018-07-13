@@ -15,12 +15,16 @@ import com.jarvis.cache.demo.mapper.temp.BaseMapper;
  * 
  * @author jiayu.qiu
  */
-public interface UserMapper  extends BaseMapper<UserDO, Long>{
+public interface UserMapper {// extends BaseMapper<UserDO, Long>
     String CACHE_NAME = "user2";
     
-    default String getCacheName() {
-        return CACHE_NAME;
-    }
+//    default String getCacheName() {
+//        return CACHE_NAME;
+//    }
+    
+    @Cache(expire = 3600, expireExpression = "null == #retVal ? 600: 3600", key = "'user2-byid-' + #args[0]")
+    UserDO getById(Long id);
+    
     /**
      * 根据用户id获取用户信息
      * 
@@ -43,7 +47,7 @@ public interface UserMapper  extends BaseMapper<UserDO, Long>{
      * 测试 autoload = true
      * @return
      */
-    @Cache(expire = 1200, key = "'user-list-' + @@hash(#args[0])", autoload = true)
+    @Cache(expire = 1200, key = "'user-list-' + #hash(#args[0])", autoload = true)
     List<UserDO> listByCondition(UserCondition condition);
 
     /**

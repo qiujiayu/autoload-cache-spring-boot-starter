@@ -39,7 +39,7 @@ public class AutoloadCacheController {
             CacheAopProxyChain pjp = tmpTO.getJoinPoint();
             String className = pjp.getTarget().getClass().getName();
             String methodName = pjp.getMethod().getName();
-            CacheKeyTO cacheKeyTO = tmpTO.getCacheKey();    
+            CacheKeyTO cacheKeyTO = tmpTO.getCacheKey();
             AutoLoadVO autoLoadVO = new AutoLoadVO();
             autoLoadVO.setNamespace(cacheKeyTO.getNamespace());
             autoLoadVO.setKey(cacheKeyTO.getKey());

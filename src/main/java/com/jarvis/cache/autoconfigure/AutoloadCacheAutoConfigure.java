@@ -75,7 +75,7 @@ public class AutoloadCacheAutoConfigure {
     @ConditionalOnBean({ ICacheManager.class, AbstractScriptParser.class, ICloner.class })
     public CacheHandler autoloadCacheHandler(ICacheManager cacheManager, AbstractScriptParser scriptParser,
             ICloner cloner) {
-        CacheHandler cacheHandler= new CacheHandler(cacheManager, scriptParser, config.getConfig(), cloner);
+        CacheHandler cacheHandler = new CacheHandler(cacheManager, scriptParser, config.getConfig(), cloner);
         cacheHandler.setLock(lock);
         return cacheHandler;
     }

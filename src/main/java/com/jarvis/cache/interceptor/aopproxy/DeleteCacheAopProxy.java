@@ -16,7 +16,7 @@ public class DeleteCacheAopProxy implements DeleteCacheAopProxyChain {
     private Method method;
 
     public DeleteCacheAopProxy(MethodInvocation invocation) {
-        this.invocation=invocation;
+        this.invocation = invocation;
     }
 
     @Override
@@ -31,8 +31,8 @@ public class DeleteCacheAopProxy implements DeleteCacheAopProxyChain {
 
     @Override
     public Method getMethod() {
-        if(null == method) {
-            this.method=invocation.getMethod();
+        if (null == method) {
+            this.method = invocation.getMethod();
         }
         return method;
     }

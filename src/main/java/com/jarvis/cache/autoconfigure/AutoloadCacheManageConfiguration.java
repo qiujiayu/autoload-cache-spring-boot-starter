@@ -43,9 +43,6 @@ import redis.clients.jedis.JedisCluster;
 @ConditionalOnProperty(value = "autoload.cache.enable", matchIfMissing = true)
 public class AutoloadCacheManageConfiguration {
 
-    private static final boolean ognlPresent = ClassUtils.isPresent("ognl.Ognl",
-            AutoloadCacheManageConfiguration.class.getClassLoader());
-
     private static final boolean hessianPresent = ClassUtils.isPresent(
             "com.caucho.hessian.io.AbstractSerializerFactory", AutoloadCacheManageConfiguration.class.getClassLoader());
 
@@ -59,16 +56,7 @@ public class AutoloadCacheManageConfiguration {
     @Bean
     @ConditionalOnMissingBean(AbstractScriptParser.class)
     public AbstractScriptParser autoloadCacheScriptParser() {
-        AbstractScriptParser res = null;
-        if (ognlPresent) {
-            res = new OgnlParser();
-            log.debug("OgnlParser auto-configured");
-        } else {
-            res = new SpringELParser();
-            log.debug("SpringELParser auto-configured");
-        }
-
-        return res;
+        return new SpringELParser();
     }
 
     /**
@@ -105,6 +93,11 @@ public class AutoloadCacheManageConfiguration {
     @ConditionalOnClass(name = "org.springframework.data.redis.connection.RedisConnectionFactory")
     public ICacheManager autoloadCacheCacheManager(AutoloadCacheProperties config, ISerializer<Object> serializer,
             ApplicationContext applicationContext) {
+        return createRedisCacheManager(config, serializer, applicationContext);
+    }
+
+    public static ICacheManager createRedisCacheManager(AutoloadCacheProperties config, ISerializer<Object> serializer,
+            ApplicationContext applicationContext) {
         RedisConnectionFactory connectionFactory = null;
         try {
             connectionFactory = applicationContext.getBean(RedisConnectionFactory.class);
@@ -139,7 +132,8 @@ public class AutoloadCacheManageConfiguration {
                     return manager;
                 }
             } else if (redisConnection instanceof JedisConnection) {
-                SpringJedisCacheManager manager = new SpringJedisCacheManager((JedisConnectionFactory) connectionFactory, serializer);
+                SpringJedisCacheManager manager = new SpringJedisCacheManager(
+                        (JedisConnectionFactory) connectionFactory, serializer);
                 // 根据需要自行配置
                 manager.setHashExpire(config.getJedis().getHashExpire());
                 log.debug("ICacheManager with SpringJedisCacheManager auto-configured," + config.getConfig());

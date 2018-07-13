@@ -12,9 +12,9 @@ public class AopUtil {
      * @return
      */
     public static Class<?> getTargetClass(Object target) {
-        Class<?> targetClass=AopProxyUtils.ultimateTargetClass(target);
-        if(targetClass == null && target != null) {
-            targetClass=target.getClass();
+        Class<?> targetClass = AopProxyUtils.ultimateTargetClass(target);
+        if (targetClass == null && target != null) {
+            targetClass = target.getClass();
         }
         return targetClass;
     }

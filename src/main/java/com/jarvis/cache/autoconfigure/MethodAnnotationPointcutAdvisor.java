@@ -9,19 +9,20 @@ import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
 
 /**
  * PointcutAdvisor
+ * 
  * @author jiayu.qiu
  */
 public class MethodAnnotationPointcutAdvisor extends AbstractPointcutAdvisor {
 
-    private static final long serialVersionUID=-7431399745989513294L;
+    private static final long serialVersionUID = -7431399745989513294L;
 
     private final Pointcut pointcut;
 
     private final Advice advice;
 
     public MethodAnnotationPointcutAdvisor(Class<? extends Annotation> methodAnnotationType, Advice advice) {
-        this.pointcut=new AnnotationMatchingPointcut(null, methodAnnotationType);
-        this.advice=advice;
+        this.pointcut = new AnnotationMatchingPointcut(null, methodAnnotationType);
+        this.advice = advice;
     }
 
     @Override

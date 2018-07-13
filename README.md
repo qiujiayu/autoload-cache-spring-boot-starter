@@ -29,7 +29,11 @@
 
 @Transactional 与 @Cache 同时使用到同一个类中时：
 
-1. 当@EnableTransactionManagement(proxyTargetClass = true)时 @Cache注解必须加在类中;
-2. @EnableTransactionManagement(proxyTargetClass = false)时 @Cache注解必须加在接口中;
+在实现接口的情况下：
+
+1. 当@EnableTransactionManagement(proxyTargetClass = true)时 @Cache注解必须加在class方法中;
+2. @EnableTransactionManagement(proxyTargetClass = false)时, @Cache注解必须加在interface及class中都可以;
+
+总结：初Mybatis Mapper接口外，尽量将@Cache注解必须加在class方法中。
 
 QQ群：429274886

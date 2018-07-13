@@ -21,11 +21,11 @@ public class AutoLoadVO {
     private long requestTimes;
 
     private long expire;
-    
+
     private String expireTime;
 
     private long requestTimeout;
-    
+
     private String requestTimeoutTime;
 
     private String lastLoadTime;

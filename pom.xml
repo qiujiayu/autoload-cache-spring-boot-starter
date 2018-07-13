@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.github.qiujiayu</groupId>
   <artifactId>autoload-cache-spring-boot-starter</artifactId>
-  <version>6.9.0</version>
+  <version>6.9.1</version>
   <packaging>jar</packaging>
   <name>spring-boot-autoload-cache-starter</name>
   <description>autoload-cache spring boot starter.</description>
@@ -30,14 +31,15 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
-    <autoload-cache.version>6.9.0</autoload-cache.version>
-    <spring-boot.version>1.4.2.RELEASE</spring-boot.version>
+    <autoload-cache.version>6.9.1</autoload-cache.version>
+    <spring-boot.version>1.5.9.RELEASE</spring-boot.version><!-- 2.0.3.RELEASE -->
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <!-- Import dependency management from Spring Boot,not include plugin management as the parent import style -->
+        <!-- Import dependency management from Spring Boot,not include plugin 
+          management as the parent import style -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
         <version>${spring-boot.version}</version>
@@ -59,6 +61,21 @@
       <optional>true</optional>
     </dependency>
     <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aspects</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjrt</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib</artifactId>
       <version>3.2.4</version>
@@ -66,6 +83,11 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-redis</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>redis.clients</groupId>
+      <artifactId>jedis</artifactId>
       <optional>true</optional>
     </dependency>
     <!-- @ConfigurationProperties annotation processing (metadata for IDEs) -->
@@ -93,7 +115,7 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>com.h2database</groupId>  
+      <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <scope>test</scope>
     </dependency>
@@ -104,15 +126,8 @@
       <scope>test</scope>
       <optional>true</optional>
     </dependency>
-    <!-- 
-    <dependency>
-      <groupId>com.caucho</groupId>
-      <artifactId>hessian</artifactId>
-      <version>4.0.38</version>
-      <scope>test</scope>
-      <optional>true</optional>
-    </dependency>
-     -->
+    <!-- <dependency> <groupId>com.caucho</groupId> <artifactId>hessian</artifactId> 
+      <version>4.0.38</version> <scope>test</scope> <optional>true</optional> </dependency> -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>

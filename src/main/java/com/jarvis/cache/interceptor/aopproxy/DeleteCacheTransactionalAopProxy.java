@@ -9,7 +9,7 @@ public class DeleteCacheTransactionalAopProxy implements DeleteCacheTransactiona
     private final MethodInvocation invocation;
 
     public DeleteCacheTransactionalAopProxy(MethodInvocation invocation) {
-        this.invocation=invocation;
+        this.invocation = invocation;
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jarvis.cache.demo.condition.UserCondition;
 import com.jarvis.cache.demo.entity.UserDO;
+import com.jarvis.cache.demo.service.UserDAO;
 import com.jarvis.cache.demo.service.UserService;
 
 @RestController
@@ -19,9 +20,14 @@ public class UserController {
     @Autowired
     private UserService userService;
     
+    @Autowired 
+    private UserDAO userDAO;
+    
     @GetMapping()
     public List<UserDO> list() {
-        return userService.listByCondition(new UserCondition());
+        UserCondition condition = new UserCondition();
+        userDAO.listByCondition(condition);
+        return userService.listByCondition(condition);
     }
 
     @GetMapping("/{id}")

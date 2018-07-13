@@ -11,7 +11,7 @@ public interface UserService {
 
     UserDO getUserById(Long userId);
 
-    // @Cache(expire = 600, key = "'userid-list-' + @@hash(#args[0])")
+    // @Cache(expire = 600, key = "'userid-list-' + #hash(#args[0])")
     List<UserDO> listByCondition(UserCondition condition);
 
     // @CacheDeleteTransactional

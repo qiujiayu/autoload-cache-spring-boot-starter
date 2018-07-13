@@ -24,7 +24,7 @@ public class HTTPBasicAuthorizeAttribute implements Filter {
     private static final String SESSION_AUTH_ATTRIBUTE = "autoload-cache-auth";
 
     private final AutoloadCacheProperties properties;
-    
+
     public HTTPBasicAuthorizeAttribute(AutoloadCacheProperties properties) {
         this.properties = properties;
     }

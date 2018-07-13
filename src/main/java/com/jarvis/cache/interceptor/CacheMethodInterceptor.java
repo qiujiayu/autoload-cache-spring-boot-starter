@@ -12,6 +12,7 @@ import com.jarvis.cache.CacheHandler;
 import com.jarvis.cache.annotation.Cache;
 import com.jarvis.cache.autoconfigure.AutoloadCacheProperties;
 import com.jarvis.cache.interceptor.aopproxy.CacheAopProxy;
+import com.jarvis.cache.util.AopUtil;
 
 /**
  * 对@Cache 拦截注解
@@ -36,8 +37,16 @@ public class CacheMethodInterceptor implements MethodInterceptor {
         if (!this.config.isEnable()) {
             return invocation.proceed();
         }
-        // Class<?> invocationCls = invocation.getClass();
         Method method = invocation.getMethod();
+        // if (method.getDeclaringClass().isInterface()) {
+        Class<?> cls = AopUtil.getTargetClass(invocation.getThis());
+        if (!cls.equals(invocation.getThis().getClass())) {
+            if (logger.isDebugEnabled()) {
+                logger.debug(invocation.getThis().getClass() + "-->" + cls);
+            }
+            return invocation.proceed();
+        }
+        // }
         if (logger.isDebugEnabled()) {
             logger.debug(invocation.toString());
         }
@@ -52,7 +61,8 @@ public class CacheMethodInterceptor implements MethodInterceptor {
             if (specificMethod.isAnnotationPresent(Cache.class)) {
                 Cache cache = specificMethod.getAnnotation(Cache.class);
                 if (logger.isDebugEnabled()) {
-                    logger.debug(invocation.getThis().getClass().getName() + "." + specificMethod.getName() + "-->@Cache");
+                    logger.debug(
+                            invocation.getThis().getClass().getName() + "." + specificMethod.getName() + "-->@Cache");
                 }
                 return cacheHandler.proceed(new CacheAopProxy(invocation), cache);
             }

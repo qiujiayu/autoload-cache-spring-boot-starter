@@ -16,7 +16,7 @@ import lombok.Data;
 @Data
 @ConfigurationProperties(prefix = AutoloadCacheProperties.PREFIX)
 public class AutoloadCacheProperties {
-    
+
     public static final String PREFIX = "autoload.cache";
 
     private AutoLoadConfig config = new AutoLoadConfig();
@@ -36,7 +36,7 @@ public class AutoloadCacheProperties {
      * @Cache 注解是否生效, 默认值为true
      */
     private boolean enableReadAndWrite = true;
-    
+
     /**
      * @DeleteCache 和 @DeleteCacheTransactional 注解是否生效, 默认值为true
      */
@@ -45,21 +45,21 @@ public class AutoloadCacheProperties {
     /**
      * @Cache 注解AOP执行顺序
      */
-    private Integer cacheOrder = Integer.MAX_VALUE;
+    private int cacheOrder = Integer.MAX_VALUE;
 
     /**
      * @DeleteCache 注解AOP执行顺序
      */
-    private Integer deleteCacheOrder = Integer.MAX_VALUE;
+    private int deleteCacheOrder = Integer.MAX_VALUE;
     /**
      * @DeleteCacheTransactionalAspect 注解AOP执行顺序
      */
-    private Integer deleteCacheTransactionalOrder = 0;
+    private int deleteCacheTransactionalOrder = 0;
 
     private String adminUserName = "admin";
-    
+
     private String adminPassword = "admin";
-    
+
     @PostConstruct
     public void init() {
         if (namespaceEnable && null != env) {
@@ -74,8 +74,6 @@ public class AutoloadCacheProperties {
         }
 
     }
-
-    
 
     /**
      * 对JedisClusterCacheManager 进行配置
