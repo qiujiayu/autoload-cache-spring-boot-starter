@@ -3,8 +3,9 @@ package com.jarvis.cache.autoconfigure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisClusterConnection;
@@ -26,13 +27,15 @@ import redis.clients.jedis.JedisCluster;
  * @author: jiayu.qiu
  */
 @Configuration
-@AutoConfigureAfter({ RedisAutoConfiguration.class, AutoloadCacheManageConfiguration.class })
+@AutoConfigureAfter({AutoloadCacheManageConfiguration.class })
 public class DistributedLockConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(DistributedLockConfiguration.class);
 
     @Bean
-    @ConditionalOnMissingBean(ILock.class)
+    @ConditionalOnMissingBean({ILock.class})
+    @ConditionalOnClass(RedisConnectionFactory.class)
+    @ConditionalOnBean(RedisConnectionFactory.class)
     public ILock autoLoadCacheDistributedLock(RedisConnectionFactory connectionFactory) {
         if (null == connectionFactory) {
             return null;
