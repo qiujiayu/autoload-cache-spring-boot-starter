@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisConnectionUtils;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.jarvis.cache.lock.AbstractRedisLock;
 
@@ -25,6 +26,7 @@ public class SpringJedisLock extends AbstractRedisLock {
             return -1L;
         }
         RedisConnection redisConnection = RedisConnectionUtils.getConnection(redisConnectionFactory);
+        TransactionSynchronizationManager.hasResource(redisConnectionFactory);
         try {
             Jedis jedis = (Jedis) redisConnection.getNativeConnection();
             return jedis.setnx(key, val);
@@ -42,6 +44,7 @@ public class SpringJedisLock extends AbstractRedisLock {
             return;
         }
         RedisConnection redisConnection = RedisConnectionUtils.getConnection(redisConnectionFactory);
+        TransactionSynchronizationManager.hasResource(redisConnectionFactory);
         try {
             Jedis jedis = (Jedis) redisConnection.getNativeConnection();
             jedis.expire(key, expire);
@@ -59,6 +62,7 @@ public class SpringJedisLock extends AbstractRedisLock {
             return null;
         }
         RedisConnection redisConnection = RedisConnectionUtils.getConnection(redisConnectionFactory);
+        TransactionSynchronizationManager.hasResource(redisConnectionFactory);
         try {
             Jedis jedis = (Jedis) redisConnection.getNativeConnection();
             return jedis.get(key);
@@ -76,6 +80,7 @@ public class SpringJedisLock extends AbstractRedisLock {
             return null;
         }
         RedisConnection redisConnection = RedisConnectionUtils.getConnection(redisConnectionFactory);
+        TransactionSynchronizationManager.hasResource(redisConnectionFactory);
         try {
             Jedis jedis = (Jedis) redisConnection.getNativeConnection();
             return jedis.getSet(key, newVal);
@@ -93,6 +98,7 @@ public class SpringJedisLock extends AbstractRedisLock {
             return;
         }
         RedisConnection redisConnection = RedisConnectionUtils.getConnection(redisConnectionFactory);
+        TransactionSynchronizationManager.hasResource(redisConnectionFactory);
         try {
             Jedis jedis = (Jedis) redisConnection.getNativeConnection();
             jedis.del(key);

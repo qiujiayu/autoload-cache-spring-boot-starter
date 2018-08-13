@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisConnectionUtils;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.jarvis.cache.serializer.ISerializer;
 
@@ -41,6 +42,7 @@ public class SpringJedisCacheManager extends AbstractRedisCacheManager {
         public JedisConnectionClient(JedisConnectionFactory redisConnectionFactory) {
             this.redisConnectionFactory = redisConnectionFactory;
             this.redisConnection = RedisConnectionUtils.getConnection(redisConnectionFactory);
+            TransactionSynchronizationManager.hasResource(redisConnectionFactory);
             this.jedis = (Jedis) redisConnection.getNativeConnection();
         }
 
