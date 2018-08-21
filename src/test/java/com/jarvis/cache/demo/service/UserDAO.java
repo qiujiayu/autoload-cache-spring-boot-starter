@@ -27,7 +27,7 @@ import com.jarvis.cache.demo.mapper.UserMapper;
  * @review: qiujiayu[qiu_jy@suixingpay.com]/2018年7月13日 下午11:31:41
  */
 @Component
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 public class UserDAO {
 
     @Autowired

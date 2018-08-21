@@ -14,7 +14,7 @@ import com.jarvis.cache.demo.entity.UserDO;
 import com.jarvis.cache.demo.mapper.UserMapper;
 
 @Service
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
     @Autowired

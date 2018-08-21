@@ -7,15 +7,11 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.jarvis.cache.demo.condition.UserCondition;
 import com.jarvis.cache.demo.mapper.UserMapper;
 
-//@EnableAspectJAutoProxy(proxyTargetClass=false)
-@EnableTransactionManagement(proxyTargetClass = false)
 @SpringBootApplication
 @MapperScan("com.jarvis.cache.demo.mapper")
 public class CacheDemoApplication {
