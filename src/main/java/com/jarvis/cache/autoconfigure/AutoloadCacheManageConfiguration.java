@@ -1,5 +1,15 @@
 package com.jarvis.cache.autoconfigure;
 
+import com.jarvis.cache.ICacheManager;
+import com.jarvis.cache.redis.JedisClusterCacheManager;
+import com.jarvis.cache.redis.SpringRedisCacheManager;
+import com.jarvis.cache.script.AbstractScriptParser;
+import com.jarvis.cache.script.OgnlParser;
+import com.jarvis.cache.script.SpringELParser;
+import com.jarvis.cache.serializer.HessianSerializer;
+import com.jarvis.cache.serializer.ISerializer;
+import com.jarvis.cache.serializer.JdkSerializer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -9,30 +19,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisClusterConnection;
-import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.jedis.JedisConnection;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.util.ClassUtils;
-
-import com.jarvis.cache.ICacheManager;
-import com.jarvis.cache.redis.JedisClusterCacheManager;
-import com.jarvis.cache.redis.SpringJedisCacheManager;
-import com.jarvis.cache.script.AbstractScriptParser;
-import com.jarvis.cache.script.OgnlParser;
-import com.jarvis.cache.script.SpringELParser;
-import com.jarvis.cache.serializer.HessianSerializer;
-import com.jarvis.cache.serializer.ISerializer;
-import com.jarvis.cache.serializer.JdkSerializer;
-
-import lombok.extern.slf4j.Slf4j;
-import redis.clients.jedis.JedisCluster;
 
 /**
  * 对autoload-cache进行一些默认配置<br>
  * 如果需要自定义，需要自行覆盖即可
- * 
+ *
  * @author jiayu.qiu
  */
 @Slf4j
@@ -50,7 +43,7 @@ public class AutoloadCacheManageConfiguration {
      * 表达式解析器{@link AbstractScriptParser AbstractScriptParser} 注入规则：<br>
      * 如果导入了Ognl的jar包，优先 使用Ognl表达式：{@link OgnlParser
      * OgnlParser}，否则使用{@link SpringELParser SpringELParser}<br>
-     * 
+     *
      * @return
      */
     @Bean
@@ -63,7 +56,7 @@ public class AutoloadCacheManageConfiguration {
      * * 序列化工具{@link ISerializer ISerializer} 注入规则：<br>
      * 如果导入了Hessian的jar包，优先使用Hessian：{@link HessianSerializer
      * HessianSerializer},否则使用{@link JdkSerializer JdkSerializer}<br>
-     * 
+     *
      * @return
      */
     @Bean
@@ -82,7 +75,7 @@ public class AutoloadCacheManageConfiguration {
 
     /**
      * 默认只支持{@link JedisClusterCacheManager JedisClusterCacheManager}<br>
-     * 
+     *
      * @param config
      * @param serializer
      * @param applicationContext
@@ -92,12 +85,11 @@ public class AutoloadCacheManageConfiguration {
     @ConditionalOnMissingBean(ICacheManager.class)
     @ConditionalOnClass(name = "org.springframework.data.redis.connection.RedisConnectionFactory")
     public ICacheManager autoloadCacheCacheManager(AutoloadCacheProperties config, ISerializer<Object> serializer,
-            ApplicationContext applicationContext) {
+                                                   ApplicationContext applicationContext) {
         return createRedisCacheManager(config, serializer, applicationContext);
     }
 
-    public static ICacheManager createRedisCacheManager(AutoloadCacheProperties config, ISerializer<Object> serializer,
-            ApplicationContext applicationContext) {
+    public static ICacheManager createRedisCacheManager(AutoloadCacheProperties config, ISerializer<Object> serializer, ApplicationContext applicationContext) {
         RedisConnectionFactory connectionFactory = null;
         try {
             connectionFactory = applicationContext.getBean(RedisConnectionFactory.class);
@@ -107,39 +99,13 @@ public class AutoloadCacheManageConfiguration {
         if (null == connectionFactory) {
             return null;
         }
-        if (!(connectionFactory instanceof JedisConnectionFactory)) {
-            log.debug("connectionFactory is not JedisConnectionFactory");
-            return null;
-        }
 
-        RedisConnection redisConnection = null;
-        try {
-            redisConnection = connectionFactory.getConnection(); // 当Redis配置不正确时，此处会抛异常
-        } catch (Throwable e) {
-            log.error(e.getMessage(), e);
+        SpringRedisCacheManager manager = new SpringRedisCacheManager(connectionFactory, serializer);
+        // 根据需要自行配置
+        manager.setHashExpire(config.getJedis().getHashExpire());
+        if (log.isDebugEnabled()) {
+            log.debug("ICacheManager with SpringJedisCacheManager auto-configured," + config.getConfig());
         }
-        if (null != redisConnection) {
-            if (redisConnection instanceof RedisClusterConnection) {
-                RedisClusterConnection redisClusterConnection = (RedisClusterConnection) redisConnection;
-                // 优先使用JedisCluster
-                JedisCluster jedisCluster = null;
-                jedisCluster = (JedisCluster) redisClusterConnection.getNativeConnection();
-                if (null != jedisCluster) {
-                    JedisClusterCacheManager manager = new JedisClusterCacheManager(jedisCluster, serializer);
-                    // 根据需要自行配置
-                    manager.setHashExpire(config.getJedis().getHashExpire());
-                    log.debug("ICacheManager with JedisClusterCacheManager auto-configured," + config.getConfig());
-                    return manager;
-                }
-            } else if (redisConnection instanceof JedisConnection) {
-                SpringJedisCacheManager manager = new SpringJedisCacheManager(
-                        (JedisConnectionFactory) connectionFactory, serializer);
-                // 根据需要自行配置
-                manager.setHashExpire(config.getJedis().getHashExpire());
-                log.debug("ICacheManager with SpringJedisCacheManager auto-configured," + config.getConfig());
-                return manager;
-            }
-        }
-        return null;
+        return manager;
     }
 }
