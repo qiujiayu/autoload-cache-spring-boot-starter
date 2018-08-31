@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: autoload-cache-test
+  aop:
+    proxy-target-class: false
+  datasource:
+    driverClassName: org.h2.Driver
+    password: ''
+    url: jdbc:h2:mem:db_users;MODE=MYSQL;INIT=RUNSCRIPT FROM './src/test/resources/init_table.sql'
+    username: ''
+  redis:
+    #host: 127.0.0.1
+    #port: 6379
+    cluster:
+      max-redirects: 10
+      nodes:
+      - 192.168.1.100:6379
+      - 192.168.1.100:6380
+      - 192.168.1.100:6381
+      - 192.168.1.101:6379
+      - 192.168.1.101:6380
+      - 192.168.1.101:6381
+
+    pool:
+      maxActive: 2048
+      maxIdle: 200
+      maxWait: 1500
+      minIdle: 20
+
+autoload:
+  cache:
+    config:
+      namespace: autoload-cache-test
+    enable: true
+    proxy-target-class: true
+mybatis:
+  configuration:
+    cacheEnabled: false
+    default-statement-timeout: 5
+  mapperLocations: classpath:mybatis/*.xml
