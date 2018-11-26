@@ -34,6 +34,6 @@
 1. 当@EnableTransactionManagement(proxyTargetClass = true)时 @Cache注解必须加在class方法中;
 2. @EnableTransactionManagement(proxyTargetClass = false)时, @Cache注解必须加在interface及class中都可以;
 
-总结：初Mybatis Mapper接口外，尽量将@Cache注解必须加在class方法中。
+总结：除Mybatis Mapper接口外，尽量将@Cache注解必须加在class方法中。
 
 QQ群：429274886
