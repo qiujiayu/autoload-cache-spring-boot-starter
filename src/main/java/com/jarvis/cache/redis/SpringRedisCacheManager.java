@@ -1,15 +1,20 @@
 package com.jarvis.cache.redis;
 
 import com.jarvis.cache.serializer.ISerializer;
+import com.jarvis.cache.to.CacheKeyTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisConnectionUtils;
+
+import java.util.Set;
 
 /**
  * Redis缓存管理
  *
  * @author jiayu.qiu
  */
+@Slf4j
 public class SpringRedisCacheManager extends AbstractRedisCacheManager {
 
     private final RedisConnectionFactory redisConnectionFactory;
@@ -20,7 +25,7 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
     }
 
     @Override
-    protected IRedis getRedis(String cacheKey) {
+    protected IRedis getRedis() {
         return new RedisConnectionClient(redisConnectionFactory);
     }
 
@@ -59,10 +64,13 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
             if (redisConnection.isPipelined()) {
                 redisConnection.openPipeline();
             }
-            redisConnection.hSet(key, field, value);
-            redisConnection.expire(key, seconds);
-            if (redisConnection.isPipelined()) {
-                redisConnection.closePipeline();
+            try {
+                redisConnection.hSet(key, field, value);
+                redisConnection.expire(key, seconds);
+            } finally {
+                if (redisConnection.isPipelined()) {
+                    redisConnection.closePipeline();
+                }
             }
         }
 
@@ -77,14 +85,35 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
         }
 
         @Override
-        public void del(byte[] key) {
-            redisConnection.del(key);
+        public void delete(Set<CacheKeyTO> keys) {
+            if (redisConnection.isPipelined()) {
+                redisConnection.openPipeline();
+            }
+            try {
+                for (CacheKeyTO cacheKeyTO : keys) {
+                    String cacheKey = cacheKeyTO.getCacheKey();
+                    if (null == cacheKey || cacheKey.length() == 0) {
+                        continue;
+                    }
+                    if (log.isDebugEnabled()) {
+                        log.debug("delete cache {}", cacheKey);
+                    }
+                    String hfield = cacheKeyTO.getHfield();
+                    if (null == hfield || hfield.length() == 0) {
+                        redisConnection.del(KEY_SERIALIZER.serialize(cacheKey));
+                    } else {
+                        redisConnection.hDel(KEY_SERIALIZER.serialize(cacheKey), KEY_SERIALIZER.serialize(hfield));
+                    }
+                }
+            } finally {
+                if (redisConnection.isPipelined()) {
+                    redisConnection.closePipeline();
+                }
+            }
+
         }
 
-        @Override
-        public void hdel(byte[] key, byte[]... fields) {
-            redisConnection.hDel(key, fields);
-        }
+
     }
 
 }

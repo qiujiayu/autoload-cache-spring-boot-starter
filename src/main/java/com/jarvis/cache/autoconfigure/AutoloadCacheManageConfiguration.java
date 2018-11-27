@@ -1,6 +1,7 @@
 package com.jarvis.cache.autoconfigure;
 
 import com.jarvis.cache.ICacheManager;
+import com.jarvis.cache.redis.AbstractRedisCacheManager;
 import com.jarvis.cache.redis.JedisClusterCacheManager;
 import com.jarvis.cache.redis.SpringRedisCacheManager;
 import com.jarvis.cache.script.AbstractScriptParser;
@@ -9,6 +10,7 @@ import com.jarvis.cache.script.SpringELParser;
 import com.jarvis.cache.serializer.HessianSerializer;
 import com.jarvis.cache.serializer.ISerializer;
 import com.jarvis.cache.serializer.JdkSerializer;
+import com.jarvis.cache.serializer.KryoSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -19,8 +21,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.jedis.JedisClusterConnection;
 import org.springframework.util.ClassUtils;
+import redis.clients.jedis.JedisCluster;
 
 /**
  * 对autoload-cache进行一些默认配置<br>
@@ -39,6 +44,8 @@ public class AutoloadCacheManageConfiguration {
     private static final boolean hessianPresent = ClassUtils.isPresent(
             "com.caucho.hessian.io.AbstractSerializerFactory", AutoloadCacheManageConfiguration.class.getClassLoader());
 
+    private static final boolean kryoPresent = ClassUtils.isPresent(
+            "com.esotericsoftware.kryo.Kryo", AutoloadCacheManageConfiguration.class.getClassLoader());
     /**
      * 表达式解析器{@link AbstractScriptParser AbstractScriptParser} 注入规则：<br>
      * 如果导入了Ognl的jar包，优先 使用Ognl表达式：{@link OgnlParser
@@ -66,6 +73,9 @@ public class AutoloadCacheManageConfiguration {
         if (hessianPresent) {// 推荐优先使用：Hessian
             res = new HessianSerializer();
             log.debug("HessianSerializer auto-configured");
+        } else if(kryoPresent) {
+            res = new KryoSerializer();
+            log.debug("KryoSerializer auto-configured");
         } else {
             res = new JdkSerializer();
             log.debug("JdkSerializer auto-configured");
@@ -100,12 +110,23 @@ public class AutoloadCacheManageConfiguration {
             return null;
         }
 
-        SpringRedisCacheManager manager = new SpringRedisCacheManager(connectionFactory, serializer);
-        // 根据需要自行配置
-        manager.setHashExpire(config.getJedis().getHashExpire());
-        if (log.isDebugEnabled()) {
-            log.debug("ICacheManager with SpringJedisCacheManager auto-configured," + config.getConfig());
+        RedisConnection redisConnection = null;
+        try {
+            redisConnection = connectionFactory.getConnection();
+        } catch (Throwable e) {
+            log.error(e.getMessage(), e);
         }
-        return manager;
+        AbstractRedisCacheManager cacheManager;
+        if (redisConnection instanceof JedisClusterConnection) {
+            JedisClusterConnection redisClusterConnection = (JedisClusterConnection) redisConnection;
+            // 优先使用JedisCluster; 因为JedisClusterConnection 不支持eval、evalSha等方法需要使用JedisCluster
+            JedisCluster jedisCluster = redisClusterConnection.getNativeConnection();
+            cacheManager = new JedisClusterCacheManager(jedisCluster, serializer);
+        }else{
+            cacheManager = new SpringRedisCacheManager(connectionFactory, serializer);
+        }
+        // 根据需要自行配置
+        cacheManager.setHashExpire(config.getJedis().getHashExpire());
+        return cacheManager;
     }
 }

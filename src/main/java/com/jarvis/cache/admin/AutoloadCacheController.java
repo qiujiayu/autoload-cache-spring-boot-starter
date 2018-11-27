@@ -3,6 +3,8 @@ package com.jarvis.cache.admin;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -77,7 +79,9 @@ public class AutoloadCacheController {
     public boolean removeCache(String key, String hfield) {
         CacheKeyTO cacheKeyTO = new CacheKeyTO(autoloadCacheHandler.getAutoLoadConfig().getNamespace(), key, hfield);
         try {
-            autoloadCacheHandler.delete(cacheKeyTO);
+            Set<CacheKeyTO> keys=new HashSet<>();
+            keys.add(cacheKeyTO);
+            autoloadCacheHandler.delete(keys);
             return true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
