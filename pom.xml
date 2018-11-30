@@ -4,7 +4,7 @@
 
   <groupId>com.github.qiujiayu</groupId>
   <artifactId>autoload-cache-spring-boot-starter</artifactId>
-  <version>7.0.0-SNAPSHOT</version>
+  <version>7.0.0</version>
   <packaging>jar</packaging>
   <name>spring-boot-autoload-cache-starter</name>
   <description>autoload-cache spring boot starter.</description>
@@ -31,24 +31,13 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
-    <autoload-cache.version>7.0.0-SNAPSHOT</autoload-cache.version>
-    <spring-boot.version>2.1.0.RELEASE</spring-boot.version><!-- 2.0.3.RELEASE -->
+    <autoload-cache.version>7.0.0</autoload-cache.version>
   </properties>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <!-- Import dependency management from Spring Boot,not include plugin 
-          management as the parent import style -->
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.1.0.RELEASE</version>
+  </parent>
   <dependencies>
     <dependency>
       <groupId>com.github.qiujiayu</groupId>

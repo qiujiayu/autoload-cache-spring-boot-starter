@@ -25,7 +25,7 @@ public class UserServiceTest extends BaseServiceTest {
     @Autowired
     private UserService userService;
 
-    @Test
+    //@Test
     @Transactional
     @Rollback(true)
     public void test1Add() throws Exception {
@@ -54,6 +54,14 @@ public class UserServiceTest extends BaseServiceTest {
         System.out.println("detail-->" + userDO);
         userDO = userService.getUserById(userId);
         System.out.println("detail-->" + userDO);
+    }
+
+    @Test
+    public void testGetUserById(){
+        Long userId = 10L;
+        UserDO userDO = userService.getUserById(userId);
+        System.out.println("detail-->" + userDO);
+        userService.deleteUserById(userId);
     }
 
 }

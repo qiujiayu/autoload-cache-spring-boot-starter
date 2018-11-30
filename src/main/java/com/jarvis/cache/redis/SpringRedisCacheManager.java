@@ -46,17 +46,17 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
 
         @Override
         public void set(byte[] key, byte[] value) {
-            redisConnection.set(key, value);
+            redisConnection.stringCommands().set(key, value);
         }
 
         @Override
         public void setex(byte[] key, int seconds, byte[] value) {
-            redisConnection.setEx(key, seconds, value);
+            redisConnection.stringCommands().setEx(key, seconds, value);
         }
 
         @Override
         public void hset(byte[] key, byte[] field, byte[] value) {
-            redisConnection.hSet(key, field, value);
+            redisConnection.hashCommands().hSet(key, field, value);
         }
 
         @Override
@@ -65,8 +65,8 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
                 redisConnection.openPipeline();
             }
             try {
-                redisConnection.hSet(key, field, value);
-                redisConnection.expire(key, seconds);
+                redisConnection.hashCommands().hSet(key, field, value);
+                redisConnection.keyCommands().expire(key, seconds);
             } finally {
                 if (redisConnection.isPipelined()) {
                     redisConnection.closePipeline();
@@ -76,12 +76,12 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
 
         @Override
         public byte[] get(byte[] key) {
-            return redisConnection.get(key);
+            return redisConnection.stringCommands().get(key);
         }
 
         @Override
         public byte[] hget(byte[] key, byte[] field) {
-            return redisConnection.hGet(key, field);
+            return redisConnection.hashCommands().hGet(key, field);
         }
 
         @Override
@@ -100,9 +100,9 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
                     }
                     String hfield = cacheKeyTO.getHfield();
                     if (null == hfield || hfield.length() == 0) {
-                        redisConnection.del(KEY_SERIALIZER.serialize(cacheKey));
+                        redisConnection.keyCommands().del(KEY_SERIALIZER.serialize(cacheKey));
                     } else {
-                        redisConnection.hDel(KEY_SERIALIZER.serialize(cacheKey), KEY_SERIALIZER.serialize(hfield));
+                        redisConnection.hashCommands().hDel(KEY_SERIALIZER.serialize(cacheKey), KEY_SERIALIZER.serialize(hfield));
                     }
                 }
             } finally {

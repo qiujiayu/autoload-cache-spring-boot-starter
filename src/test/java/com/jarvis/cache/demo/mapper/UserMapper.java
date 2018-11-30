@@ -22,7 +22,7 @@ public interface UserMapper {// extends BaseMapper<UserDO, Long>
 //        return CACHE_NAME;
 //    }
     
-    @Cache(expire = 3600, expireExpression = "null == #retVal ? 600: 3600", key = "'user2-byid-' + #args[0]")
+    @Cache(expire = 60, expireExpression = "null == #retVal ? 60: 61", key = "'user2-byid-' + #args[0]")
     UserDO getById(Long id);
     
     /**
@@ -31,7 +31,7 @@ public interface UserMapper {// extends BaseMapper<UserDO, Long>
      * @param id
      * @return
      */
-    @Cache(expire = 3600, expireExpression = "null == #retVal ? 600: 3600", key = "'user-byid-' + #args[0]")
+    @Cache(expire = 60, expireExpression = "null == #retVal ? 60: 61", key = "'user-byid-' + #args[0]")
     UserDO getUserById(Long id);
     
     /**
@@ -39,7 +39,7 @@ public interface UserMapper {// extends BaseMapper<UserDO, Long>
      * 测试 autoload = true
      * @return
      */
-    @Cache(expire = 3600, key = "user-all", autoload = true)
+    @Cache(expire = 60, key = "user-all", autoload = true)
     List<UserDO> allUsers();
     
     /**
@@ -47,7 +47,7 @@ public interface UserMapper {// extends BaseMapper<UserDO, Long>
      * 测试 autoload = true
      * @return
      */
-    @Cache(expire = 1200, key = "'user-list-' + #hash(#args[0])", autoload = true)
+    @Cache(expire = 60, key = "'user-list-' + #hash(#args[0])", autoload = true)
     List<UserDO> listByCondition(UserCondition condition);
 
     /**
@@ -56,7 +56,7 @@ public interface UserMapper {// extends BaseMapper<UserDO, Long>
      * @param name
      * @return
      */
-    @Cache(expire = 1200, expireExpression = "null == #retVal ? 120: 1200", key = "'userid-byname-' + #args[0]")
+    @Cache(expire = 60, expireExpression = "null == #retVal ? 60: 61", key = "'userid-byname-' + #args[0]")
     Long getUserIdByName(String name);
 
     /**

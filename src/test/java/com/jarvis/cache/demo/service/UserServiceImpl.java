@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDO getUserById(Long id) {
-        return userMapper.getById(id);
+        return userMapper.getUserById(id);
     }
 
     @Override
