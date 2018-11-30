@@ -21,11 +21,12 @@ spring:
       - 192.168.176.130:7001
       - 192.168.176.130:7002
 
-    pool:
-      maxActive: 2048
-      maxIdle: 200
-      maxWait: 1500
-      minIdle: 20
+    jedis:
+      pool:
+        maxActive: 2048
+        maxIdle: 200
+        maxWait: 1500ms
+        minIdle: 20
 
 autoload:
   cache:
