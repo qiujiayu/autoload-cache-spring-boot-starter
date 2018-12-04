@@ -1,12 +1,17 @@
 package com.jarvis.cache.redis;
 
+import com.jarvis.cache.MSetParam;
 import com.jarvis.cache.serializer.ISerializer;
 import com.jarvis.cache.to.CacheKeyTO;
+import com.jarvis.cache.to.CacheWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisConnectionUtils;
 
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -26,17 +31,20 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
 
     @Override
     protected IRedis getRedis() {
-        return new RedisConnectionClient(redisConnectionFactory);
+        return new RedisConnectionClient(redisConnectionFactory, this);
     }
 
     public static class RedisConnectionClient implements IRedis {
         private final RedisConnectionFactory redisConnectionFactory;
         private final RedisConnection redisConnection;
 
-        public RedisConnectionClient(RedisConnectionFactory redisConnectionFactory) {
+        private final AbstractRedisCacheManager cacheManager;
+
+        public RedisConnectionClient(RedisConnectionFactory redisConnectionFactory, AbstractRedisCacheManager cacheManager) {
             this.redisConnectionFactory = redisConnectionFactory;
             this.redisConnection = RedisConnectionUtils.getConnection(redisConnectionFactory);
             // TransactionSynchronizationManager.hasResource(redisConnectionFactory);
+            this.cacheManager = cacheManager;
         }
 
         @Override
@@ -75,6 +83,53 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
         }
 
         @Override
+        public void mset(Collection<MSetParam> params) throws Exception {
+            CacheKeyTO cacheKeyTO;
+            String cacheKey;
+            String hfield;
+            CacheWrapper<Object> result;
+            byte[] key;
+            byte[] val;
+            if (redisConnection.isPipelined()) {
+                redisConnection.openPipeline();
+            }
+            try {
+                for (MSetParam param : params) {
+                    if (null == param) {
+                        continue;
+                    }
+                    cacheKeyTO = param.getCacheKey();
+                    cacheKey = cacheKeyTO.getCacheKey();
+                    if (null == cacheKey || cacheKey.isEmpty()) {
+                        continue;
+                    }
+                    result = param.getResult();
+                    hfield = cacheKeyTO.getHfield();
+                    key = AbstractRedisCacheManager.KEY_SERIALIZER.serialize(cacheKey);
+                    val = cacheManager.getSerializer().serialize(result);
+                    if (null == hfield || hfield.isEmpty()) {
+                        int expire = result.getExpire();
+                        if (expire == AbstractRedisCacheManager.NEVER_EXPIRE) {
+                            redisConnection.stringCommands().set(key, val);
+                        } else if (expire > 0) {
+                            redisConnection.stringCommands().setEx(key, expire, val);
+                        }
+                    } else {
+                        int hExpire = cacheManager.getHashExpire() < 0 ? result.getExpire() : cacheManager.getHashExpire();
+                        redisConnection.hashCommands().hSet(key, AbstractRedisCacheManager.KEY_SERIALIZER.serialize(hfield), val);
+                        if (hExpire > 0) {
+                            redisConnection.keyCommands().expire(key, hExpire);
+                        }
+                    }
+                }
+            } finally {
+                if (redisConnection.isPipelined()) {
+                    redisConnection.closePipeline();
+                }
+            }
+        }
+
+        @Override
         public byte[] get(byte[] key) {
             return redisConnection.stringCommands().get(key);
         }
@@ -82,6 +137,38 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
         @Override
         public byte[] hget(byte[] key, byte[] field) {
             return redisConnection.hashCommands().hGet(key, field);
+        }
+
+        @Override
+        public Map<CacheKeyTO, CacheWrapper<Object>> mget(Type returnType, Set<CacheKeyTO> keys) throws Exception {
+            String hfield;
+            String cacheKey;
+            byte[] key;
+            if (redisConnection.isPipelined()) {
+                redisConnection.openPipeline();
+            } else {
+                throw new Exception(redisConnection.getClass().getName() + "不支持Pipeline");
+            }
+            try {
+                for (CacheKeyTO cacheKeyTO : keys) {
+                    cacheKey = cacheKeyTO.getCacheKey();
+                    if (null == cacheKey || cacheKey.isEmpty()) {
+                        continue;
+                    }
+                    hfield = cacheKeyTO.getHfield();
+                    key = AbstractRedisCacheManager.KEY_SERIALIZER.serialize(cacheKey);
+                    if (null == hfield || hfield.isEmpty()) {
+                        redisConnection.stringCommands().get(key);
+                    } else {
+                        redisConnection.hashCommands().hGet(key, AbstractRedisCacheManager.KEY_SERIALIZER.serialize(hfield));
+                    }
+                }
+            } finally {
+                if (redisConnection.isPipelined()) {
+                    return cacheManager.deserialize(keys, redisConnection.closePipeline(), returnType);
+                }
+            }
+            return null;
         }
 
         @Override
