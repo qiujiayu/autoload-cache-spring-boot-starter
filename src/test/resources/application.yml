@@ -9,8 +9,8 @@ spring:
     url: jdbc:h2:mem:db_users;MODE=MYSQL;INIT=RUNSCRIPT FROM './src/test/resources/init_table.sql'
     username: ''
   redis:
-    #host: 127.0.0.1
-    #port: 6379
+#    host: 127.0.0.1
+#    port: 6379
     cluster:
       max-redirects: 10
       nodes:
@@ -20,12 +20,12 @@ spring:
       - 192.168.176.129:7002
       - 192.168.176.130:7001
       - 192.168.176.130:7002
-
-    pool:
-      maxActive: 2048
-      maxIdle: 200
-      maxWait: 1500
-      minIdle: 20
+    jedis:
+      pool:
+        maxActive: 2048
+        maxIdle: 200
+        maxWait: 1500ms
+        minIdle: 20
 
 autoload:
   cache:
@@ -35,6 +35,6 @@ autoload:
     proxy-target-class: true
 mybatis:
   configuration:
-    cacheEnabled: false
+    cache-enabled: false
     default-statement-timeout: 5
-  mapperLocations: classpath:mybatis/*.xml
+  mapper-locations: classpath:mybatis/*.xml

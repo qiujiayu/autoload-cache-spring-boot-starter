@@ -5,9 +5,11 @@ import java.util.List;
 import com.jarvis.cache.annotation.Cache;
 import com.jarvis.cache.annotation.CacheDelete;
 import com.jarvis.cache.annotation.CacheDeleteKey;
+import com.jarvis.cache.annotation.Magic;
 import com.jarvis.cache.demo.condition.UserCondition;
 import com.jarvis.cache.demo.entity.UserDO;
 import com.jarvis.cache.demo.mapper.temp.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 在接口中使用注解的例子 业务背景：用户表中有id, name, password,
@@ -17,13 +19,10 @@ import com.jarvis.cache.demo.mapper.temp.BaseMapper;
  */
 public interface UserMapper {// extends BaseMapper<UserDO, Long>
     String CACHE_NAME = "user2";
-    
+
 //    default String getCacheName() {
 //        return CACHE_NAME;
 //    }
-    
-    @Cache(expire = 3600, expireExpression = "null == #retVal ? 600: 3600", key = "'user2-byid-' + #args[0]")
-    UserDO getById(Long id);
     
     /**
      * 根据用户id获取用户信息
@@ -31,15 +30,37 @@ public interface UserMapper {// extends BaseMapper<UserDO, Long>
      * @param id
      * @return
      */
-    @Cache(expire = 3600, expireExpression = "null == #retVal ? 600: 3600", key = "'user-byid-' + #args[0]")
+    @Cache(expire = 60, expireExpression = "null == #retVal ? 30: 60", key = "'user-byid-' + #args[0]")
     UserDO getUserById(Long id);
+
+    @Cache(expire = 60, expireExpression = "null == #retVal ? 30: 60",
+            // 因为Magic 模式下会对参数进行分隔，所以取参数固定使用 #args[0]，
+            // 如果参数据是复杂类型，比如List<UserDO>, 那么取参使用 #args[0].id
+            // 为了降低缓存不致问题，些处生的有key值要与getUserById 方法的一样
+            key = "'user-byid-' + #args[0]",
+            magic = @Magic(
+                    // 因为Magic 模式下会对数组及集合类型的数据进行分隔，所以取返回值固定使用 #retVal，
+                    // 此key表达生成的值也必须要与getUserById 方法的一样
+                    key = "'user-byid-' + #retVal.id"))
+    List<UserDO> listByIds(@Param("ids") List<Long> ids);
+
+    @Cache(expire = 60, expireExpression = "null == #retVal ? 30: 60",
+            // 因为Magic 模式下会对参数进行分隔，所以取参数固定使用 #args[0]，
+            // 如果参数据是复杂类型，比如List<UserDO>, 那么取参使用 #args[0].id
+            // 为了降低缓存不致问题，些处生的有key值要与getUserById 方法的一样
+            key = "'user-byid-' + #args[0]",
+            magic = @Magic(
+                    // 因为Magic 模式下会对数组及集合类型的数据进行分隔，所以取返回值固定使用 #retVal，
+                    // 此key表达生成的值也必须要与getUserById 方法的一样
+                    key = "'user-byid-' + #retVal.id"))
+    List<UserDO> listByIds2(@Param("ids") Long... ids);
     
     /**
      * 
      * 测试 autoload = true
      * @return
      */
-    @Cache(expire = 3600, key = "user-all", autoload = true)
+    @Cache(expire = 60, key = "user-all", autoload = true)
     List<UserDO> allUsers();
     
     /**
@@ -47,7 +68,7 @@ public interface UserMapper {// extends BaseMapper<UserDO, Long>
      * 测试 autoload = true
      * @return
      */
-    @Cache(expire = 1200, key = "'user-list-' + #hash(#args[0])", autoload = true)
+    @Cache(expire = 60, key = "'user-list-' + #hash(#args[0])", autoload = true)
     List<UserDO> listByCondition(UserCondition condition);
 
     /**
@@ -56,7 +77,7 @@ public interface UserMapper {// extends BaseMapper<UserDO, Long>
      * @param name
      * @return
      */
-    @Cache(expire = 1200, expireExpression = "null == #retVal ? 120: 1200", key = "'userid-byname-' + #args[0]")
+    @Cache(expire = 60, expireExpression = "null == #retVal ? 60: 61", key = "'userid-byname-' + #args[0]")
     Long getUserIdByName(String name);
 
     /**
@@ -72,7 +93,9 @@ public interface UserMapper {// extends BaseMapper<UserDO, Long>
      * 
      * @param user
      */
-    @CacheDelete({ @CacheDeleteKey(value = "'userid-byname-' + #args[0].name") })
+    @CacheDelete({
+            @CacheDeleteKey(value = "'user-byid-' + #args[0].id"),
+            @CacheDeleteKey(value = "'userid-byname-' + #args[0].name") })
     int addUser(UserDO user);
 
     /**

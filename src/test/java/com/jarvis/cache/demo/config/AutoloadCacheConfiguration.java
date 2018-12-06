@@ -16,7 +16,7 @@ import com.jarvis.cache.map.MapCacheManager;
 @Configuration
 public class AutoloadCacheConfiguration {
 
-    @Bean
+    // @Bean
     public ICacheManager mapCacheManager(AutoloadCacheProperties config, ICloner cloner) {
         return new MapCacheManager(config.getConfig(), cloner);
     }

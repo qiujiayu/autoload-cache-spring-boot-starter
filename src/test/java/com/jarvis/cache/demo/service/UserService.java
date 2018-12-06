@@ -17,6 +17,8 @@ public interface UserService {
     // @CacheDeleteTransactional
     Long register(UserDO user);
 
+    Long getUserIdByName(String name);
+
     UserDO doLogin(String name, String password);
 
     void updateUser(UserDO user);
