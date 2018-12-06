@@ -88,11 +88,16 @@ public class UserServiceTest extends BaseServiceTest {
             System.out.println("list item --->" + user);
         }
 
-
-
         list = userMapper.listByIds2(1L, 2L, 5L, 6L, 101L, 102L);
         Assert.assertNotNull(list);
         Assert.assertEquals(list.size(), 4);
+        for (UserDO user : list) {
+            System.out.println("list item --->" + user);
+        }
+
+        list = userMapper.listByIds2(500L, 600L, 700L);
+        Assert.assertNotNull(list);
+        Assert.assertEquals(list.size(), 0);
         for (UserDO user : list) {
             System.out.println("list item --->" + user);
         }
