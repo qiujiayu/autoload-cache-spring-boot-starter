@@ -64,7 +64,7 @@ public class JedisClusterTest {
     }
 
     @Test
-    public void testJedisCluster2() {
+    public void testJedisCluster2() throws Exception {
         JedisCluster jedisCluster = getJedisCluster();
         if (null == jedisCluster) {
             return;
