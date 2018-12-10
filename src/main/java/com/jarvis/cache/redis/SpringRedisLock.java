@@ -1,103 +1,70 @@
 package com.jarvis.cache.redis;
 
 import com.jarvis.cache.lock.AbstractRedisLock;
-import com.jarvis.cache.serializer.StringSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisConnectionUtils;
+import redis.clients.jedis.Jedis;
 
+@Slf4j
 public class SpringRedisLock extends AbstractRedisLock {
-    private static final Logger logger = LoggerFactory.getLogger(SpringRedisLock.class);
-    private static final StringSerializer STRING_SERIALIZER = new StringSerializer();
+    private final JedisConnectionFactory redisConnectionFactory;
 
-    private final RedisConnectionFactory redisConnectionFactory;
-
-    public SpringRedisLock(RedisConnectionFactory redisConnectionFactory) {
+    public SpringRedisLock(JedisConnectionFactory redisConnectionFactory) {
         this.redisConnectionFactory = redisConnectionFactory;
     }
 
-    private RedisConnection getConnection() {
-        return RedisConnectionUtils.getConnection(redisConnectionFactory);
+    /**
+     * @param key
+     * @return
+     */
+    public RedisConnection getRedisConnection(String key) {
+        if (null == redisConnectionFactory || null == key || key.length() == 0) {
+            return null;
+        }
+        RedisConnection redisConnection = RedisConnectionUtils.getConnection(redisConnectionFactory);
+        // TransactionSynchronizationManager.hasResource(redisConnectionFactory);
+        return redisConnection;
+    }
+
+    /**
+     * @param redisConnection
+     */
+    public void releaseConnection(RedisConnection redisConnection) {
+        RedisConnectionUtils.releaseConnection(redisConnection, redisConnectionFactory);
     }
 
     @Override
-    protected Boolean setnx(String key, String val) {
-        if (null == redisConnectionFactory || null == key || key.length() == 0) {
+    protected boolean setnx(String key, String val, int expire) {
+        RedisConnection redisConnection = getRedisConnection(key);
+        if (null == redisConnection) {
             return false;
         }
-        RedisConnection redisConnection = getConnection();
         try {
-            return redisConnection.setNX(STRING_SERIALIZER.serialize(key), STRING_SERIALIZER.serialize(val));
+            Jedis jedis = (Jedis) redisConnection.getNativeConnection();
+            return OK.equalsIgnoreCase(jedis.set(key, val, NX, EX, expire));
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            log.error(ex.getMessage(), ex);
         } finally {
-            RedisConnectionUtils.releaseConnection(redisConnection, redisConnectionFactory);
+            releaseConnection(redisConnection);
         }
         return false;
     }
 
     @Override
-    protected void expire(String key, int expire) {
-        if (null == redisConnectionFactory || null == key || key.length() == 0 || expire < 0) {
-            return;
-        }
-        RedisConnection redisConnection = getConnection();
-        try {
-            redisConnection.expire(STRING_SERIALIZER.serialize(key), expire);
-        } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
-        } finally {
-            RedisConnectionUtils.releaseConnection(redisConnection, redisConnectionFactory);
-        }
-
-    }
-
-    @Override
-    protected String get(String key) {
-        if (null == redisConnectionFactory || null == key || key.length() == 0) {
-            return null;
-        }
-        RedisConnection redisConnection = getConnection();
-        try {
-            return STRING_SERIALIZER.deserialize(redisConnection.get(STRING_SERIALIZER.serialize(key)), null);
-        } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
-        } finally {
-            RedisConnectionUtils.releaseConnection(redisConnection, redisConnectionFactory);
-        }
-        return null;
-    }
-
-    @Override
-    protected String getSet(String key, String newVal) {
-        if (null == redisConnectionFactory || null == key || key.length() == 0) {
-            return null;
-        }
-        RedisConnection redisConnection = getConnection();
-        try {
-            return STRING_SERIALIZER.deserialize(redisConnection.getSet(STRING_SERIALIZER.serialize(key), STRING_SERIALIZER.serialize(newVal)), null);
-        } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
-        } finally {
-            RedisConnectionUtils.releaseConnection(redisConnection, redisConnectionFactory);
-        }
-        return null;
-    }
-
-    @Override
     protected void del(String key) {
-        if (null == redisConnectionFactory || null == key || key.length() == 0) {
+        RedisConnection redisConnection = getRedisConnection(key);
+        if (null == redisConnection) {
             return;
         }
-        RedisConnection redisConnection = getConnection();
         try {
-            redisConnection.del(STRING_SERIALIZER.serialize(key));
+            Jedis jedis = (Jedis) redisConnection.getNativeConnection();
+            jedis.del(key);
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            log.error(ex.getMessage(), ex);
         } finally {
-            RedisConnectionUtils.releaseConnection(redisConnection, redisConnectionFactory);
+            releaseConnection(redisConnection);
         }
     }
 
