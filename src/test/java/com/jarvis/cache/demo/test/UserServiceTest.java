@@ -85,6 +85,7 @@ public class UserServiceTest extends BaseServiceTest {
         Assert.assertNotNull(list);
         Assert.assertEquals(list.size(), 5);
         for (UserDO user : list) {
+            Assert.assertNotNull(user);
             System.out.println("list item --->" + user);
         }
 
@@ -92,6 +93,7 @@ public class UserServiceTest extends BaseServiceTest {
         Assert.assertNotNull(list);
         Assert.assertEquals(list.size(), 4);
         for (UserDO user : list) {
+            Assert.assertNotNull(user);
             System.out.println("list item --->" + user);
         }
 
@@ -99,6 +101,7 @@ public class UserServiceTest extends BaseServiceTest {
         Assert.assertNotNull(list);
         Assert.assertEquals(list.size(), 0);
         for (UserDO user : list) {
+            Assert.assertNotNull(user);
             System.out.println("list item --->" + user);
         }
 
@@ -106,6 +109,7 @@ public class UserServiceTest extends BaseServiceTest {
         Assert.assertNotNull(list);
         Assert.assertEquals(list.size(), 0);
         for (UserDO user : list) {
+            Assert.assertNotNull(user);
             System.out.println("list item --->" + user);
         }
 
