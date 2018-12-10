@@ -46,6 +46,7 @@ public class AutoloadCacheManageConfiguration {
 
     private static final boolean kryoPresent = ClassUtils.isPresent(
             "com.esotericsoftware.kryo.Kryo", AutoloadCacheManageConfiguration.class.getClassLoader());
+
     /**
      * 表达式解析器{@link AbstractScriptParser AbstractScriptParser} 注入规则：<br>
      * 如果导入了Ognl的jar包，优先 使用Ognl表达式：{@link OgnlParser
@@ -73,7 +74,7 @@ public class AutoloadCacheManageConfiguration {
         if (hessianPresent) {// 推荐优先使用：Hessian
             res = new HessianSerializer();
             log.debug("HessianSerializer auto-configured");
-        } else if(kryoPresent) {
+        } else if (kryoPresent) {
             res = new KryoSerializer();
             log.debug("KryoSerializer auto-configured");
         } else {
@@ -119,10 +120,10 @@ public class AutoloadCacheManageConfiguration {
         AbstractRedisCacheManager cacheManager;
         if (redisConnection instanceof JedisClusterConnection) {
             JedisClusterConnection redisClusterConnection = (JedisClusterConnection) redisConnection;
-            // 优先使用JedisCluster; 因为JedisClusterConnection 不支持eval、evalSha等方法需要使用JedisCluster
+            // 优先使用JedisCluster; 因为JedisClusterConnection 批量处理，需要使用JedisCluster
             JedisCluster jedisCluster = redisClusterConnection.getNativeConnection();
             cacheManager = new JedisClusterCacheManager(jedisCluster, serializer);
-        }else{
+        } else {
             cacheManager = new SpringRedisCacheManager(connectionFactory, serializer);
         }
         // 根据需要自行配置

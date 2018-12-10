@@ -28,13 +28,13 @@ public class SpringRedisLock extends AbstractRedisLock {
 
     @Override
     protected boolean setnx(String key, String val, int expire) {
-        if (null == redisConnectionFactory || null == key || key.length() == 0) {
+        if (null == redisConnectionFactory || null == key || key.isEmpty()) {
             return false;
         }
         RedisConnection redisConnection = getConnection();
         try {
             Expiration expiration = Expiration.from(expire, TimeUnit.SECONDS);
-            return redisConnection.set(STRING_SERIALIZER.serialize(key), STRING_SERIALIZER.serialize(val), expiration, RedisStringCommands.SetOption.SET_IF_ABSENT);
+            return redisConnection.stringCommands().set(STRING_SERIALIZER.serialize(key), STRING_SERIALIZER.serialize(val), expiration, RedisStringCommands.SetOption.SET_IF_ABSENT);
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         } finally {
@@ -50,7 +50,7 @@ public class SpringRedisLock extends AbstractRedisLock {
         }
         RedisConnection redisConnection = getConnection();
         try {
-            redisConnection.del(STRING_SERIALIZER.serialize(key));
+            redisConnection.keyCommands().del(STRING_SERIALIZER.serialize(key));
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         } finally {
