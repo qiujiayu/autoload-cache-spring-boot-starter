@@ -24,7 +24,7 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
 
     private final RedisConnectionFactory redisConnectionFactory;
 
-    public SpringRedisCacheManager(RedisConnectionFactory redisConnectionFactory, ISerializer<Object> serializer) {
+    public SpringRedisCacheManager(RedisConnectionFactory redisConnectionFactory, ISerializer<CacheWrapper<Object>> serializer) {
         super(serializer);
         this.redisConnectionFactory = redisConnectionFactory;
     }
