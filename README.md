@@ -58,3 +58,7 @@ QQ群：429274886
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-pool2</artifactId>
     </dependency>
+
+
+Spring boot1 使用6.10.x版本；
+Spring boot2 使用7.0.x版本；    
