@@ -1,12 +1,12 @@
 package com.jarvis.cache.demo.entity;
 
-import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 @Data
 @Accessors(chain = true)
@@ -25,4 +25,9 @@ public class UserDO implements Serializable {
 
     private Integer status;
 
+    public UserDO(Long id, String name, String password) {
+        this.id = id;
+        this.name = name;
+        this.password = password;
+    }
 }

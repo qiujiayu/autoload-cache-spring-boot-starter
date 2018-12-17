@@ -1,9 +1,10 @@
 
 package com.jarvis.cache.demo.test;
 
-import java.util.List;
-
+import com.jarvis.cache.demo.condition.UserCondition;
+import com.jarvis.cache.demo.entity.UserDO;
 import com.jarvis.cache.demo.mapper.UserMapper;
+import com.jarvis.cache.demo.service.UserService;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -14,9 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jarvis.cache.demo.condition.UserCondition;
-import com.jarvis.cache.demo.entity.UserDO;
-import com.jarvis.cache.demo.service.UserService;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author: jiayu.qiu
@@ -61,7 +63,7 @@ public class UserServiceTest extends BaseServiceTest {
     }
 
     @Test
-    public void testGetUserById(){
+    public void testGetUserById() {
         Long userId = 10L;
         UserDO userDO = userService.getUserById(userId);
         System.out.println("detail-->" + userDO);
@@ -72,8 +74,8 @@ public class UserServiceTest extends BaseServiceTest {
     @Transactional
     @Rollback(true)
     public void testMagic() throws Exception {
-        for(int i=0;i<10;i++) {
-            UserDO userDO = UserDO.builder().name("magicTestUser"+i).password("aaaa").build();
+        for (int i = 0; i < 10; i++) {
+            UserDO userDO = UserDO.builder().name("magicTestUser" + i).password("aaaa").build();
             userService.register(userDO);
         }
 
@@ -113,6 +115,24 @@ public class UserServiceTest extends BaseServiceTest {
             System.out.println("list item --->" + user);
         }
 
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testMagic2() throws Exception {
+        List<UserDO> list = userService.testMagic("name", "pwd", 100L, 200L, 300L);
+        Assert.assertNotNull(list);
+        Assert.assertEquals(list.size(), 3);
+
+        list = userService.testMagic("name", "pwd", 100L, 200L, 300L, 400L);
+        Assert.assertNotNull(list);
+        Assert.assertEquals(list.size(), 4);
+
+        List<Long> ids = Arrays.asList(100L, 200L, 300L, 400L, 500L);
+        list = userService.testMagic("name", "pwd", ids);
+        Assert.assertNotNull(list);
+        Assert.assertEquals(list.size(), 5);
     }
 
 }

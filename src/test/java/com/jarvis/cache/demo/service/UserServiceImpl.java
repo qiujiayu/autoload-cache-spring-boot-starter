@@ -1,6 +1,7 @@
 package com.jarvis.cache.demo.service;
 
 import com.jarvis.cache.annotation.Cache;
+import com.jarvis.cache.annotation.Magic;
 import com.jarvis.cache.demo.condition.UserCondition;
 import com.jarvis.cache.demo.entity.UserDO;
 import com.jarvis.cache.demo.mapper.UserMapper;
@@ -78,6 +79,40 @@ public class UserServiceImpl implements UserService {
     // @Transactional(rollbackFor = Throwable.class)
     public void deleteUserById(Long userId) {
         userMapper.deleteUserById(userId);
+    }
+
+    @Override
+    /**
+     * 为了测试Magic 支持多个参数的情况
+     *
+     * @param name
+     * @param password
+     * @param ids
+     * @return
+     */
+    @Cache(expire = 60, expireExpression = "null == #retVal ? 30: 60",
+            key = "'user-testMagic-' + #args[0] + '-' + #args[1] + '-' + #args[2]",
+            magic = @Magic(
+                    key = "'user-testMagic-' + #args[0] + '-' + #args[1] + '-' + #retVal.id", iterableArgIndex = 2))
+    public List<UserDO> testMagic(String name, String password, Long... ids) {
+        List<UserDO> list = new ArrayList<>(ids.length);
+        for (Long id : ids) {
+            list.add(new UserDO(id, name, password));
+        }
+        return list;
+    }
+
+    @Override
+    @Cache(expire = 60, expireExpression = "null == #retVal ? 30: 60",
+            key = "'user-testMagic-' + #args[0] + '-' + #args[1] + '-' + #args[2]",
+            magic = @Magic(
+                    key = "'user-testMagic-' + #args[0] + '-' + #args[1] + '-' + #retVal.id", iterableArgIndex = 2))
+    public List<UserDO> testMagic(String name, String password, List<Long> ids) {
+        List<UserDO> list = new ArrayList<>(ids.size());
+        for (Long id : ids) {
+            list.add(new UserDO(id, name, password));
+        }
+        return list;
     }
 
 }

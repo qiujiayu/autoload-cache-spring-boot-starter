@@ -24,4 +24,8 @@ public interface UserService {
     void updateUser(UserDO user);
 
     void deleteUserById(Long userId);
+
+    List<UserDO> testMagic(String name, String password, Long... ids);
+
+    List<UserDO> testMagic(String name, String password, List<Long> ids);
 }
