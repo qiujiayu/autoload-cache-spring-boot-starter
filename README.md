@@ -36,4 +36,7 @@
 
 总结：除Mybatis Mapper接口外，尽量将@Cache注解必须加在class方法中。
 
+Spring boot1 使用6.10.x版本；
+Spring boot2 使用7.0.x版本；
+
 QQ群：429274886
