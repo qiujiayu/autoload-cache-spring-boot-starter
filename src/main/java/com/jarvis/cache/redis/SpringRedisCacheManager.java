@@ -69,16 +69,12 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
 
         @Override
         public void hset(byte[] key, byte[] field, byte[] value, int seconds) {
-            if (redisConnection.isPipelined()) {
-                redisConnection.openPipeline();
-            }
             try {
+                redisConnection.openPipeline();
                 redisConnection.hashCommands().hSet(key, field, value);
                 redisConnection.keyCommands().expire(key, seconds);
             } finally {
-                if (redisConnection.isPipelined()) {
-                    redisConnection.closePipeline();
-                }
+                redisConnection.closePipeline();
             }
         }
 
@@ -90,10 +86,8 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
             CacheWrapper<Object> result;
             byte[] key;
             byte[] val;
-            if (redisConnection.isPipelined()) {
-                redisConnection.openPipeline();
-            }
             try {
+                redisConnection.openPipeline();
                 for (MSetParam param : params) {
                     if (null == param) {
                         continue;
@@ -123,9 +117,7 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
                     }
                 }
             } finally {
-                if (redisConnection.isPipelined()) {
-                    redisConnection.closePipeline();
-                }
+                redisConnection.closePipeline();
             }
         }
 
@@ -144,12 +136,8 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
             String hfield;
             String cacheKey;
             byte[] key;
-            if (redisConnection.isPipelined()) {
-                redisConnection.openPipeline();
-            } else {
-                throw new Exception(redisConnection.getClass().getName() + "不支持Pipeline");
-            }
             try {
+                redisConnection.openPipeline();
                 for (CacheKeyTO cacheKeyTO : keys) {
                     cacheKey = cacheKeyTO.getCacheKey();
                     if (null == cacheKey || cacheKey.isEmpty()) {
@@ -164,19 +152,14 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
                     }
                 }
             } finally {
-                if (redisConnection.isPipelined()) {
-                    return cacheManager.deserialize(keys, redisConnection.closePipeline(), returnType);
-                }
+                return cacheManager.deserialize(keys, redisConnection.closePipeline(), returnType);
             }
-            return null;
         }
 
         @Override
         public void delete(Set<CacheKeyTO> keys) {
-            if (redisConnection.isPipelined()) {
-                redisConnection.openPipeline();
-            }
             try {
+                redisConnection.openPipeline();
                 for (CacheKeyTO cacheKeyTO : keys) {
                     String cacheKey = cacheKeyTO.getCacheKey();
                     if (null == cacheKey || cacheKey.length() == 0) {
@@ -193,9 +176,7 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
                     }
                 }
             } finally {
-                if (redisConnection.isPipelined()) {
-                    redisConnection.closePipeline();
-                }
+                redisConnection.closePipeline();
             }
 
         }
