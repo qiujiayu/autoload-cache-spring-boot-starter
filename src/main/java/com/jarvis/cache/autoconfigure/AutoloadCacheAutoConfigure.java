@@ -149,7 +149,7 @@ public class AutoloadCacheAutoConfigure {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         HTTPBasicAuthorizeAttribute httpBasicFilter = new HTTPBasicAuthorizeAttribute(config);
         registrationBean.setFilter(httpBasicFilter);
-        List<String> urlPatterns = new ArrayList<String>();
+        List<String> urlPatterns = new ArrayList<String>(2);
         urlPatterns.add("/autoload-cache-ui.html");
         urlPatterns.add("/autoload-cache/*");
         registrationBean.setUrlPatterns(urlPatterns);

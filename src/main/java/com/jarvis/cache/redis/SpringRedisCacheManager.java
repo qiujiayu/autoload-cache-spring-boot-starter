@@ -145,6 +145,8 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
             byte[] key;
             if (redisConnection.isPipelined()) {
                 redisConnection.openPipeline();
+            } else {
+                throw new Exception(redisConnection.getClass().getName() + "不支持Pipeline");
             }
             try {
                 for (CacheKeyTO cacheKeyTO : keys) {
