@@ -70,7 +70,8 @@ public class AutoloadCacheManageConfiguration {
     @ConditionalOnMissingBean(ISerializer.class)
     public ISerializer<Object> autoloadCacheSerializer() {
         ISerializer<Object> res;
-        if (hessianPresent) {// 推荐优先使用：Hessian
+        // 推荐优先使用：Hessian
+        if (hessianPresent) {
             res = new HessianSerializer();
             log.debug("HessianSerializer auto-configured");
         } else if(kryoPresent) {
