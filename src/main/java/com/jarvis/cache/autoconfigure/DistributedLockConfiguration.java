@@ -15,6 +15,7 @@ import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisClusterConnection;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisConnectionUtils;
 import redis.clients.jedis.JedisCluster;
 
 /**
@@ -41,22 +42,25 @@ public class DistributedLockConfiguration {
         RedisConnection redisConnection = null;
         try {
             redisConnection = connectionFactory.getConnection();
+            AbstractRedisLock lock;
+            if (redisConnection instanceof JedisClusterConnection) {
+                JedisClusterConnection redisClusterConnection = (JedisClusterConnection) redisConnection;
+                // 优先使用JedisCluster; 因为JedisClusterConnection 不支持eval、evalSha等方法需要使用JedisCluster
+                JedisCluster jedisCluster = redisClusterConnection.getNativeConnection();
+                lock = new JedisClusterLock(jedisCluster);
+            } else {
+                lock = new SpringRedisLock((JedisConnectionFactory) connectionFactory);
+                if (log.isDebugEnabled()) {
+                    log.debug("ILock with SpringJedisLock auto-configured");
+                }
+            }
+            return lock;
         } catch (Throwable e) {
             log.error(e.getMessage(), e);
+            throw e;
+        } finally {
+            RedisConnectionUtils.releaseConnection(redisConnection, connectionFactory);
         }
-        AbstractRedisLock lock;
-        if (redisConnection instanceof JedisClusterConnection) {
-            JedisClusterConnection redisClusterConnection = (JedisClusterConnection) redisConnection;
-            // 优先使用JedisCluster; 因为JedisClusterConnection 不支持eval、evalSha等方法需要使用JedisCluster
-            JedisCluster jedisCluster = redisClusterConnection.getNativeConnection();
-            lock = new JedisClusterLock(jedisCluster);
-        } else {
-            lock = new SpringRedisLock((JedisConnectionFactory) connectionFactory);
-            if (log.isDebugEnabled()) {
-                log.debug("ILock with SpringJedisLock auto-configured");
-            }
-        }
-        return lock;
     }
 
 }
