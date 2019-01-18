@@ -38,27 +38,7 @@
 
 QQ群：429274886
 
-兼容spring boot 2：
+Spring boot2 使用7.0.x版本；  源码在master分支
 
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-redis</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>io.lettuce</groupId>
-          <artifactId>lettuce-core</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>redis.clients</groupId>
-      <artifactId>jedis</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-pool2</artifactId>
-    </dependency>
-
-
-Spring boot1 使用6.10.x版本；
-Spring boot2 使用7.0.x版本；    
+Spring boot1 使用6.10.x版本； 源码在spring-boot1分支
+  
