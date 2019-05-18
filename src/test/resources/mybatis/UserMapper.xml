@@ -94,4 +94,11 @@
   <update id="deleteUserById" parameterType="java.lang.Long">
     update user set status = 0 where id = #{id}
   </update>
+
+  <update id="deleteUserByIds">
+    update user set status = 0 where
+    <foreach collection="ids"  item="id" separator=" or ">
+      id = #{id}
+    </foreach>
+  </update>
 </mapper>

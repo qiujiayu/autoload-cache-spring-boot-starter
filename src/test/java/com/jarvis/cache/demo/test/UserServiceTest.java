@@ -5,6 +5,7 @@ import com.jarvis.cache.demo.condition.UserCondition;
 import com.jarvis.cache.demo.entity.UserDO;
 import com.jarvis.cache.demo.mapper.UserMapper;
 import com.jarvis.cache.demo.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -23,6 +24,7 @@ import java.util.List;
 /**
  * @author: jiayu.qiu
  */
+@Slf4j
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UserServiceTest extends BaseServiceTest {
     @Autowired
@@ -106,6 +108,8 @@ public class UserServiceTest extends BaseServiceTest {
             Assert.assertNotNull(user);
             System.out.println("list item --->" + user);
         }
+
+        userMapper.deleteUserByIds(1L, 5L);
 
         list = userMapper.listByIds2(500L, 600L, 700L);
         Assert.assertNotNull(list);

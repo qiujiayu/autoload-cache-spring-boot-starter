@@ -41,7 +41,7 @@ public interface UserMapper {// extends BaseMapper<UserDO, Long>
             magic = @Magic(
                     // 因为Magic 模式下会对数组及集合类型的数据进行分隔，所以取返回值固定使用 #retVal，
                     // 此key表达生成的值也必须要与getUserById 方法的一样
-                    key = "'user-byid-' + #retVal.id"))
+                    key = "'user-byid-' + #retVal.id", iterableArgIndex = 0))
     List<UserDO> listByIds(@Param("ids") List<Long> ids);
 
     @Cache(expire = 60, expireExpression = "null == #retVal ? 30: 60",
@@ -52,7 +52,7 @@ public interface UserMapper {// extends BaseMapper<UserDO, Long>
             magic = @Magic(
                     // 因为Magic 模式下会对数组及集合类型的数据进行分隔，所以取返回值固定使用 #retVal，
                     // 此key表达生成的值也必须要与getUserById 方法的一样
-                    key = "'user-byid-' + #retVal.id"))
+                    key = "'user-byid-' + #retVal.id", iterableArgIndex = 0))
     List<UserDO> listByIds2(@Param("ids") Long... ids);
     
     /**
@@ -113,4 +113,9 @@ public interface UserMapper {// extends BaseMapper<UserDO, Long>
     @CacheDelete({ @CacheDeleteKey(value = "'user-byid-' + #args[0]", condition = "#retVal > 0") })
     int deleteUserById(Long id);
 
+    /**
+     * 根据用户ids删除用户记录
+     **/
+    @CacheDelete({ @CacheDeleteKey(value = "'user-byid-' + #args[0]", condition = "#retVal > 0", iterableArgIndex = 0) })
+    int deleteUserByIds(@Param("ids") Long... ids);
 }

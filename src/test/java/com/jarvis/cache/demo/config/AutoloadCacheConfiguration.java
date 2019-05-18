@@ -1,5 +1,8 @@
 package com.jarvis.cache.demo.config;
 
+import com.jarvis.cache.serializer.FastjsonSerializer;
+import com.jarvis.cache.serializer.ISerializer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,5 +22,10 @@ public class AutoloadCacheConfiguration {
     // @Bean
     public ICacheManager mapCacheManager(AutoloadCacheProperties config, ICloner cloner) {
         return new MapCacheManager(config.getConfig(), cloner);
+    }
+
+    @Bean
+    public ISerializer<Object> autoloadCacheSerializer() {
+        return new FastjsonSerializer();
     }
 }
