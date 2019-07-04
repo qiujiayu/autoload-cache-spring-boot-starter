@@ -81,6 +81,8 @@ public class UserServiceTest extends BaseServiceTest {
             userService.register(userDO);
         }
 
+        userService.getUserById(1L);
+
         UserCondition condition = new UserCondition();
         Pageable pageable = new PageRequest(0, 5);
         condition.setPageable(pageable);
