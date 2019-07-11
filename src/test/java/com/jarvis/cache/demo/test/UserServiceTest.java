@@ -139,6 +139,10 @@ public class UserServiceTest extends BaseServiceTest {
         list = userService.testMagic("name", "pwd", ids);
         Assert.assertNotNull(list);
         Assert.assertEquals(list.size(), 5);
+
+        userService.testDeleteMagicForArg("name", "pwd", 100L, 200L);
+
+        userService.testDeleteMagicForRetVal("name", "pwd", 100L, 200L);
     }
 
 }

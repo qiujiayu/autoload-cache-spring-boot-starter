@@ -28,4 +28,9 @@ public interface UserService {
     List<UserDO> testMagic(String name, String password, Long... ids);
 
     List<UserDO> testMagic(String name, String password, List<Long> ids);
+
+
+    void testDeleteMagicForArg(String name, String password, Long... ids);
+
+    List<UserDO> testDeleteMagicForRetVal(String name, String password, Long... ids);
 }

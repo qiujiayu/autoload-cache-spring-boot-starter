@@ -1,6 +1,8 @@
 package com.jarvis.cache.demo.service;
 
 import com.jarvis.cache.annotation.Cache;
+import com.jarvis.cache.annotation.CacheDelete;
+import com.jarvis.cache.annotation.CacheDeleteMagicKey;
 import com.jarvis.cache.annotation.Magic;
 import com.jarvis.cache.demo.condition.UserCondition;
 import com.jarvis.cache.demo.entity.UserDO;
@@ -114,5 +116,26 @@ public class UserServiceImpl implements UserService {
         }
         return list;
     }
+
+    @Override
+    @CacheDelete(magic = {
+            @CacheDeleteMagicKey(value = "'user-testMagic-' + #args[0] + '-' + #args[1] + '-' + #args[2]", iterableArgIndex = 2, iterableReturnValue = false)
+    })
+    public void testDeleteMagicForArg(String name, String password, Long... ids) {
+
+    }
+
+    @Override
+    @CacheDelete(magic = {
+            @CacheDeleteMagicKey(value = "'user-testMagic-' + #args[0] + '-' + #args[1] + '-' + #retVal.id", iterableArgIndex = -1, iterableReturnValue = true)
+    })
+    public List<UserDO> testDeleteMagicForRetVal(String name, String password, Long... ids) {
+        List<UserDO> list = new ArrayList<>(ids.length);
+        for (Long id : ids) {
+            list.add(new UserDO(id, name, password));
+        }
+        return list;
+    }
+
 
 }
