@@ -145,4 +145,17 @@ public class UserServiceTest extends BaseServiceTest {
         userService.testDeleteMagicForRetVal("name", "pwd", 100L, 200L);
     }
 
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testMagic3() throws Exception {
+        List<UserDO> list = userService.loadUsers();
+        Assert.assertNotNull(list);
+        Assert.assertEquals(list.size(), 5);
+
+        list = userService.deleteUsers();
+        Assert.assertNotNull(list);
+        Assert.assertEquals(list.size(), 5);
+    }
+
 }

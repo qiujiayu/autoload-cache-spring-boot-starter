@@ -33,4 +33,8 @@ public interface UserService {
     void testDeleteMagicForArg(String name, String password, Long... ids);
 
     List<UserDO> testDeleteMagicForRetVal(String name, String password, Long... ids);
+
+    List<UserDO> loadUsers();
+
+    List<UserDO> deleteUsers();
 }

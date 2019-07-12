@@ -137,5 +137,28 @@ public class UserServiceImpl implements UserService {
         return list;
     }
 
+    @Override
+    @Cache(expire = 60, expireExpression = "null == #retVal ? 30: 60",
+            key = "", magic = @Magic(key = "'user-magic-'+ #retVal.id"))
+    public List<UserDO> loadUsers() {
+        List<UserDO> list = new ArrayList<>(5);
+        for (Long  id=100L;id<105;id++) {
+            list.add(new UserDO(id, "name"+id, "ppp"));
+        }
+        return list;
+    }
+
+    @Override
+    @CacheDelete(magic = {
+            @CacheDeleteMagicKey(value = "'user-magic-' + #retVal.id", iterableArgIndex = -1, iterableReturnValue = true)
+    })
+    public List<UserDO> deleteUsers() {
+        List<UserDO> list = new ArrayList<>(5);
+        for (Long  id=100L;id<105;id++) {
+            list.add(new UserDO(id, "name"+id, "ppp"));
+        }
+        return list;
+    }
+
 
 }
