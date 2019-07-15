@@ -36,5 +36,7 @@ public interface UserService {
 
     List<UserDO> loadUsers();
 
+    UserDO[] loadUsers(Long... ids);
+
     List<UserDO> deleteUsers();
 }

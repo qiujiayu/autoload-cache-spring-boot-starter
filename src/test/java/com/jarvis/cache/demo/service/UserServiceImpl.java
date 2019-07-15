@@ -142,10 +142,22 @@ public class UserServiceImpl implements UserService {
             key = "", magic = @Magic(key = "'user-magic-'+ #retVal.id"))
     public List<UserDO> loadUsers() {
         List<UserDO> list = new ArrayList<>(5);
-        for (Long  id=100L;id<105;id++) {
-            list.add(new UserDO(id, "name"+id, "ppp"));
+        for (Long id = 100L; id < 105; id++) {
+            list.add(new UserDO(id, "name" + id, "ppp"));
         }
         return list;
+    }
+
+    @Override
+    @Cache(expire = 60, expireExpression = "null == #retVal ? 30: 60",
+            key = "'user-magic-'+ #args[0]", magic = @Magic(key = "'user-magic-'+ #retVal.id", iterableArgIndex = 0))
+    public UserDO[] loadUsers(Long... ids) {
+        UserDO[] users = new UserDO[ids.length];
+        for (int i = 0; i < ids.length; i++) {
+            Long id = ids[i];
+            users[i] = new UserDO(id, "name" + id, "ppp");
+        }
+        return users;
     }
 
     @Override
@@ -154,8 +166,8 @@ public class UserServiceImpl implements UserService {
     })
     public List<UserDO> deleteUsers() {
         List<UserDO> list = new ArrayList<>(5);
-        for (Long  id=100L;id<105;id++) {
-            list.add(new UserDO(id, "name"+id, "ppp"));
+        for (Long id = 100L; id < 105; id++) {
+            list.add(new UserDO(id, "name" + id, "ppp"));
         }
         return list;
     }

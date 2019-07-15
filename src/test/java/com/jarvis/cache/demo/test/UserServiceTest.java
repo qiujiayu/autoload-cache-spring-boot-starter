@@ -152,6 +152,23 @@ public class UserServiceTest extends BaseServiceTest {
         List<UserDO> list = userService.loadUsers();
         Assert.assertNotNull(list);
         Assert.assertEquals(list.size(), 5);
+        for(UserDO userDO: list) {
+            System.out.println(userDO);
+        }
+
+        UserDO[] users = userService.loadUsers(1L,2L,3L,4L,5L);
+        Assert.assertNotNull(users);
+        Assert.assertEquals(users.length, 5);
+        for(UserDO userDO: users) {
+            System.out.println(userDO);
+        }
+        Long[] ids =new Long[0];
+        UserDO[] users2 = userService.loadUsers(ids);
+        Assert.assertNotNull(users2);
+        Assert.assertEquals(users2.length, 0);
+        for(UserDO userDO: users2) {
+            System.out.println(userDO);
+        }
 
         list = userService.deleteUsers();
         Assert.assertNotNull(list);
