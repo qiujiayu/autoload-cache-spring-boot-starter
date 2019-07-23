@@ -116,6 +116,6 @@ public interface UserMapper {// extends BaseMapper<UserDO, Long>
     /**
      * 根据用户ids删除用户记录
      **/
-    @CacheDelete({ @CacheDeleteKey(value = "'user-byid-' + #args[0]", condition = "#retVal > 0", iterableArgIndex = 0) })
+    @CacheDelete({ @CacheDeleteKey(value = "'user-byid-' + #args[0]", condition = "#retVal > 0") })
     int deleteUserByIds(@Param("ids") Long... ids);
 }
