@@ -5,6 +5,7 @@ import java.util.List;
 import com.jarvis.cache.annotation.Cache;
 import com.jarvis.cache.annotation.CacheDelete;
 import com.jarvis.cache.annotation.CacheDeleteKey;
+import com.jarvis.cache.annotation.CacheDeleteMagicKey;
 import com.jarvis.cache.annotation.Magic;
 import com.jarvis.cache.demo.condition.UserCondition;
 import com.jarvis.cache.demo.entity.UserDO;
@@ -116,6 +117,6 @@ public interface UserMapper {// extends BaseMapper<UserDO, Long>
     /**
      * 根据用户ids删除用户记录
      **/
-    @CacheDelete({ @CacheDeleteKey(value = "'user-byid-' + #args[0]", condition = "#retVal > 0", iterableArgIndex = 0) })
+    @CacheDelete(magic = { @CacheDeleteMagicKey(value = "'user-byid-' + #args[0]", condition = "#retVal > 0", iterableArgIndex = 0, iterableReturnValue = false) })
     int deleteUserByIds(@Param("ids") Long... ids);
 }

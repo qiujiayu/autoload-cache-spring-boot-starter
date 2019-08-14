@@ -4,7 +4,7 @@
 
   <groupId>com.github.qiujiayu</groupId>
   <artifactId>autoload-cache-spring-boot-starter</artifactId>
-  <version>7.0.4</version>
+  <version>7.0.5</version>
   <packaging>jar</packaging>
   <name>spring-boot-autoload-cache-starter</name>
   <description>autoload-cache spring boot starter.</description>
@@ -31,7 +31,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
-    <autoload-cache.version>7.0.4</autoload-cache.version>
+    <autoload-cache.version>7.0.5</autoload-cache.version>
   </properties>
   <parent>
     <groupId>org.springframework.boot</groupId>
