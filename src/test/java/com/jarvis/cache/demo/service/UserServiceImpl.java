@@ -99,9 +99,12 @@ public class UserServiceImpl implements UserService {
     public List<UserDO> testMagic(String name, String password, Long... ids) {
         List<UserDO> list = new ArrayList<>(ids.length);
         for (Long id : ids) {
-            list.add(new UserDO(id, name, password));
+            // 用于测试缓存穿透问题
+            if (id.intValue() != 100) {
+                list.add(new UserDO(id, name, password));
+            }
         }
-        return list;
+        return null;
     }
 
     @Override
@@ -112,7 +115,10 @@ public class UserServiceImpl implements UserService {
     public List<UserDO> testMagic(String name, String password, List<Long> ids) {
         List<UserDO> list = new ArrayList<>(ids.size());
         for (Long id : ids) {
-            list.add(new UserDO(id, name, password));
+            // 用于测试缓存穿透问题
+            if (id.intValue() != 100) {
+                list.add(new UserDO(id, name, password));
+            }
         }
         return list;
     }
